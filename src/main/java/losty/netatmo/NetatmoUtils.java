@@ -78,7 +78,7 @@ public class NetatmoUtils {
 			for (int i = 0; i < body.length(); i++) {
 				JSONObject data = body.getJSONObject(i);
 				Long beginTime = data.getLong("beg_time");
-				Long stepTime = data.getLong("step_time");
+				Long stepTime = data.optLong("step_time", 0);
 				JSONArray values = data.getJSONArray("value");
 				for (int j = 0; j < values.length(); j++) {
 					JSONArray myValues = values.getJSONArray(j);
