@@ -73,8 +73,9 @@ public class NetatmoUtils {
 
 	public static List<Measures> parseMeasures(JSONObject response, String[] types) {
 		List<Measures> result = new ArrayList<>();
+		JSONArray body = null;
 		try {
-			JSONArray body = response.getJSONArray("body");
+			body = response.getJSONArray("body");
 			for (int i = 0; i < body.length(); i++) {
 				JSONObject data = body.getJSONObject(i);
 				Long beginTime = data.getLong("beg_time");
@@ -86,6 +87,11 @@ public class NetatmoUtils {
 					Measures measures = new Measures();
 					measures.setBeginTime(myBeginTime);
 					for (int k = 0; k < types.length; k++) {
+
+						if (myValues.isNull(k)) {
+							continue;
+						}
+
 						switch (types[k]) {
 						case Params.TYPE_TEMPERATURE:
 							measures.setTemperature(myValues.getDouble(k));
@@ -131,12 +137,16 @@ public class NetatmoUtils {
 							break;
 						default:
 						}
+
 					}
 					result.add(measures);
 				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
+			if (body != null) {
+				System.out.println(body.toString());
+			}
 		}
 
 		return result;

@@ -20,13 +20,14 @@ public class Measures {
 	public static final double NO_DATA = Double.NaN;
 
 	long beginTime;
+
 	double temperature;
-	double CO2;
+	double minTemp;
+	double maxTemp;
 	double humidity;
 	double pressure;
 	double noise;
-	double minTemp;
-	double maxTemp;
+	double CO2;
 	double rain;
 	double sum_rain_24;
 	double sum_rain_1;
@@ -38,10 +39,12 @@ public class Measures {
 	public Measures() {
 		beginTime = 0;
 		temperature = NO_DATA;
-		CO2 = NO_DATA;
+		minTemp = NO_DATA;
+		maxTemp = NO_DATA;
 		humidity = NO_DATA;
 		pressure = NO_DATA;
 		noise = NO_DATA;
+		CO2 = NO_DATA;
 		rain = NO_DATA;
 		sum_rain_1 = NO_DATA;
 		sum_rain_24 = NO_DATA;
@@ -49,7 +52,6 @@ public class Measures {
 		windStrength = NO_DATA;
 		gustAngle = NO_DATA;
 		gustStrength = NO_DATA;
-
 	}
 
 	public long getBeginTime() {
