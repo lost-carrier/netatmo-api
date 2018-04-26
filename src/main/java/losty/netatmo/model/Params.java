@@ -27,12 +27,12 @@ public class Params {
     // These are some of the types available.
     // See the full list here: http://dev.netatmo.com/doc/restapi/getmeasure
     public static final String TYPE_TEMPERATURE = "Temperature";
+    public static final String TYPE_MIN_TEMP = "min_temp";
+    public static final String TYPE_MAX_TEMP = "max_temp";
     public static final String TYPE_CO2 = "CO2";
     public static final String TYPE_HUMIDITY = "Humidity";
     public static final String TYPE_PRESSURE = "Pressure";
     public static final String TYPE_NOISE = "Noise";
-    public static final String TYPE_MIN_TEMP = "min_temp";
-    public static final String TYPE_MAX_TEMP = "max_temp";
     public static final String TYPE_RAIN = "Rain";
     public static final String TYPE_RAIN_SUM_24 = "sum_rain_24";
     public static final String TYPE_RAIN_SUM_1 = "sum_rain_1";
