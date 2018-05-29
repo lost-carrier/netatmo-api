@@ -41,7 +41,7 @@ public class NetatmoHttpClient {
 	// https://dev.netatmo.com/doc.
 	protected final static String URL_BASE = "https://api.netatmo.net";
 	protected final static String URL_REQUEST_TOKEN = URL_BASE + "/oauth2/token";
-	protected final static String URL_GET_DEVICES_LIST = URL_BASE + "/api/devicelist";
+	protected final static String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
 	protected final static String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
 
 	private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
@@ -49,7 +49,7 @@ public class NetatmoHttpClient {
 	private String clientId;
 	private String clientSecret;
 
-	public NetatmoHttpClient(String clientId, String clientSecret) {
+	public NetatmoHttpClient(final String clientId, final String clientSecret) {
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 	}
@@ -64,47 +64,80 @@ public class NetatmoHttpClient {
 	 * @throws OAuthSystemException
 	 * @throws OAuthProblemException
 	 */
-	public OAuthJSONAccessTokenResponse login(String email, String password)
+	public OAuthJSONAccessTokenResponse login(final String email, final String password)
 			throws OAuthSystemException, OAuthProblemException {
 
 		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
-				.setGrantType(GrantType.PASSWORD).setClientId(clientId).setClientSecret(clientSecret).setUsername(email)
-				.setPassword(password).setScope("read_station").buildBodyMessage();
+				.setGrantType(GrantType.PASSWORD)
+				.setClientId(clientId)
+				.setClientSecret(clientSecret)
+				.setUsername(email)
+				.setPassword(password)
+				.setScope("read_station")
+				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
 
 	}
 
 	/**
-	 * Returns the list of devices owned by the user, and their modules. A
+	 * Retrieve an refreshed or renewed access token, using your
+	 * refresh token and the user's credentials.
+	 * 
+	 * @param token
+	 * @param email
+	 * @param password
+	 * @throws OAuthSystemException
+	 * @throws OAuthProblemException
+	 */
+	public OAuthJSONAccessTokenResponse refreshToken(final OAuthJSONAccessTokenResponse token, final String email, final String password) throws OAuthSystemException, OAuthProblemException {
+		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
+				.setGrantType(GrantType.PASSWORD)
+				.setClientId(clientId)
+				.setClientSecret(clientSecret)
+				.setRefreshToken(token.getRefreshToken())
+				.setUsername(email)
+				.setPassword(password)
+				.setScope("read_station")
+				.buildBodyMessage();
+
+		return oAuthClient.accessToken(request);
+
+	}
+
+	/**
+	 * Returns the list of stations owned by the user, and their modules. A
 	 * device is identified by its _id (which is its mac address) and each
 	 * device may have one, several or no modules, also identified by an _id.
-	 * See
-	 * <a href="https://dev.netatmo.com/doc/methods/devicelist">dev.netatmo.com/
-	 * doc/methods/devicelist</a> for more information.
+	 * See <a href=
+	 * "https://dev.netatmo.com/en-US/resources/technical/reference/weatherstation/getstationsdata">
+	 * dev.netatmo.com/en-US/resources/technical/reference/weatherstation/getstationsdata</a>
+	 * for more information.
 	 * 
-	 * @param token The token obtained by the login function.
+	 * @param token
+	 *            The token obtained by the login function.
 	 * @throws OAuthProblemException
 	 * @throws OAuthSystemException
 	 */
-	public List<Station> getDevicesList(OAuthJSONAccessTokenResponse token)
+	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token)
 			throws OAuthSystemException, OAuthProblemException {
 
-		OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(URL_GET_DEVICES_LIST)
-				.setAccessToken(token.getAccessToken()).buildQueryMessage();
+		OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(URL_GET_STATIONS_DATA)
+				.setAccessToken(token.getAccessToken())
+				.buildQueryMessage();
 
 		OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET,
 				OAuthResourceResponse.class);
 
-		return NetatmoUtils.parseDevicesList(new JSONObject(resourceResponse.getBody()));
+		return NetatmoUtils.parseStationsData(new JSONObject(resourceResponse.getBody()));
 
 	}
 
 	/**
 	 * Returns the list of measures for a device or module owned by the user.
 	 * See
-	 * <a href="https://dev.netatmo.com/doc/methods/devicelist">dev.netatmo.com/
-	 * doc/methods/devicelist</a> for more information.
+	 * <a href="https://dev.netatmo.com/en-US/resources/technical/reference/common/getmeasure">
+	 * dev.netatmo.com/en-US/resources/technical/reference/common/getmeasure</a> for more information.
 	 * 
 	 * Some parameters are optional, they can be set to "null".
 	 * 
@@ -112,7 +145,7 @@ public class NetatmoHttpClient {
 	 * @param station The station to query
 	 * @param module The module of the station (optional)
 	 * @param types A list of the types to query
-	 * @param scales The scale to query
+	 * @param scale The scale to query
 	 * @param dateBegin Start date of the interval to query (optional)
 	 * @param dateEnd End date of the interval to query (optional)
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
@@ -121,24 +154,64 @@ public class NetatmoHttpClient {
 	 * @throws OAuthSystemException
 	 * @throws OAuthProblemException
 	 */
-	public List<Measures> getMeasures(OAuthJSONAccessTokenResponse token, Station station, Module module,
-			List<String> types, String scale, Date dateBegin, Date dateEnd, Integer limit, Boolean realTime)
+	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
+			final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
 					throws OAuthSystemException, OAuthProblemException {
 
-		String[] typesArr = types.toArray(new String[0]);
+		long dateBeginMillis = 0;
+		if (dateBegin != null) {
+			dateBeginMillis = (dateBegin.getTime() / 1000);
+		}
+		long dateEndMillis = 0;
+		if (dateEnd != null) {
+			dateEndMillis = (dateEnd.getTime() / 1000);
+		}
 
-		List<String> params = new ArrayList<>();
+		return getMeasures(token, station, module, types, scale, dateBeginMillis, dateEndMillis, limit, realTime);
+
+	}
+	
+
+
+	/**
+	 * Returns the list of measures for a device or module owned by the user.
+	 * See
+	 * <a href="https://dev.netatmo.com/en-US/resources/technical/reference/common/getmeasure">
+	 * dev.netatmo.com/en-US/resources/technical/reference/common/getmeasure</a> for more information.
+	 * 
+	 * Some parameters are optional, they can be set to "null".
+	 * 
+	 * @param token The token obtained by the login function.
+	 * @param station The station to query
+	 * @param module The module of the station (optional)
+	 * @param types A list of the types to query
+	 * @param scale The scale to query
+	 * @param dateBegin Start date of the interval to query (optional)
+	 * @param dateEnd End date of the interval to query (optional)
+	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
+	 * @param realTime Some fancy real_time stuff from Netatmo
+	 * @return
+	 * @throws OAuthSystemException
+	 * @throws OAuthProblemException
+	 */
+	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
+			final List<String> types, final String scale, final long dateBegin, final long dateEnd, final Integer limit, final Boolean realTime)
+					throws OAuthSystemException, OAuthProblemException {
+
+		final String[] typesArr = types.toArray(new String[0]);
+
+		final List<String> params = new ArrayList<>();
 		params.add("device_id=" + station.getId());
 		params.add("scale=" + scale);
 		params.add("type=" + implode(",", typesArr));
 		if (module != null) {
 			params.add("module_id=" + module.getId());
 		}
-		if (dateBegin != null) {
-			params.add(String.format("date_begin=%d", dateBegin.getTime() / 1000));
+		if (dateBegin > 0) {
+			params.add(String.format("date_begin=%d", dateBegin));
 		}
-		if (dateEnd != null) {
-			params.add(String.format("date_end=%d", dateEnd.getTime() / 1000));
+		if (dateEnd > 0) {
+			params.add(String.format("date_end=%d", dateEnd));
 		}
 		if (limit != null) {
 			params.add(String.format("limit=%d", limit));
@@ -146,16 +219,11 @@ public class NetatmoHttpClient {
 		if (realTime != null) {
 			params.add(String.format("real_time=%b", realTime));
 		}
-		String query = implode("&", params.toArray(new String[0]));
-		String request = URL_GET_MEASURES + "?" + query;
-		OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-				.setAccessToken(token.getAccessToken()).buildQueryMessage();
-
-		OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET,
-				OAuthResourceResponse.class);
-
+		final String query = implode("&", params.toArray(new String[0]));
+		final String request = URL_GET_MEASURES + "?" + query;
+		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).setAccessToken(token.getAccessToken()).buildQueryMessage();
+		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 		return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
-
 	}
 
 	private static String implode(String separator, String... data) {

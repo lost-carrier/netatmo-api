@@ -21,6 +21,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
@@ -29,50 +31,49 @@ import losty.netatmo.model.Station;
 
 public class NetatmoUtils {
 
-	public static List<Station> parseDevicesList(JSONObject response) {
-		List<Station> devices = new ArrayList<Station>();
+	private static final Logger log = LoggerFactory.getLogger(NetatmoUtils.class);
+
+	public static List<Station> parseStationsData(final JSONObject response) {
+		final List<Station> devices = new ArrayList<Station>();
 
 		try {
 			JSONArray JSONstations = response.getJSONObject("body").getJSONArray("devices");
 
 			for (int i = 0; i < JSONstations.length(); i++) {
-				JSONObject station = JSONstations.getJSONObject(i);
-				String name = station.getString("station_name");
-				String moduleName = station.getString("module_name");
-				String id = station.getString("_id");
+				final JSONObject station = JSONstations.getJSONObject(i);
+				final String stationId = station.getString("_id");
+				final String stationName = station.getString("station_name");
+				final String stationModuleName = station.optString("module_name", stationId);
 
-				Station newStation = new Station(name, id);
-				Module newModule = new Module(moduleName, id, Module.TYPE_INDOOR);
+				final Station newStation = new Station(stationName, stationId);
+				final Module newStationModule = new Module(stationModuleName, stationId, Module.TYPE_INDOOR);
 
-				newStation.addModule(newModule);
+				newStation.addModule(newStationModule);
+				
+				
+				JSONArray JSONmodules = station.getJSONArray("modules");
+
+				for (int j = 0; j < JSONmodules.length(); j++) {
+					final JSONObject module = JSONmodules.getJSONObject(j);
+					final String moduleId = module.getString("_id");
+					final String moduleName = module.optString("module_name", moduleId);
+					final String moduleType = module.getString("type");
+
+					final Module newModule = new Module(moduleName, moduleId, moduleType);
+					newStation.addModule(newModule);
+				}
+				
 				devices.add(newStation);
 			}
-
-			JSONArray JSONmodules = response.getJSONObject("body").getJSONArray("modules");
-
-			for (int i = 0; i < JSONmodules.length(); i++) {
-				JSONObject module = JSONmodules.getJSONObject(i);
-				String mainDevice = module.getString("main_device");
-				String name = module.getString("module_name");
-				String id = module.getString("_id");
-				String type = module.getString("type");
-
-				Module newModule = new Module(name, id, type);
-				for (Station station : devices) {
-					if (mainDevice.equals(station.getId())) {
-						station.addModule(newModule);
-					}
-				}
-			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			log.error("Error parsing response", e);
 		}
 
 		return devices;
 	}
 
 	public static List<Measures> parseMeasures(JSONObject response, String[] types) {
-		List<Measures> result = new ArrayList<>();
+		final List<Measures> result = new ArrayList<>();
 		JSONArray body = null;
 		try {
 			body = response.getJSONArray("body");
@@ -143,10 +144,7 @@ public class NetatmoUtils {
 				}
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
-			if (body != null) {
-				System.out.println(body.toString());
-			}
+			log.error("Error parsing response", e);
 		}
 
 		return result;

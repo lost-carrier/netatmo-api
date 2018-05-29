@@ -19,22 +19,22 @@ public class Measures {
 
 	public static final double NO_DATA = Double.NaN;
 
-	long beginTime;
+	private long beginTime;
 
-	double temperature;
-	double minTemp;
-	double maxTemp;
-	double humidity;
-	double pressure;
-	double noise;
-	double CO2;
-	double rain;
-	double sum_rain_24;
-	double sum_rain_1;
-	double windAngle;
-	double windStrength;
-	double gustAngle;
-	double gustStrength;
+	private double temperature;
+	private double minTemp;
+	private double maxTemp;
+	private double humidity;
+	private double pressure;
+	private double noise;
+	private double CO2;
+	private double rain;
+	private double sum_rain_24;
+	private double sum_rain_1;
+	private double windAngle;
+	private double windStrength;
+	private double gustAngle;
+	private double gustStrength;
 
 	public Measures() {
 		beginTime = 0;
@@ -58,7 +58,7 @@ public class Measures {
 		return this.beginTime;
 	}
 
-	public void setBeginTime(long beginTime) {
+	public void setBeginTime(final long beginTime) {
 		this.beginTime = beginTime;
 	}
 
@@ -66,7 +66,7 @@ public class Measures {
 		return temperature;
 	}
 
-	public void setTemperature(double temperature) {
+	public void setTemperature(final double temperature) {
 		this.temperature = temperature;
 	}
 
@@ -74,7 +74,7 @@ public class Measures {
 		return CO2;
 	}
 
-	public void setCO2(double CO2) {
+	public void setCO2(final double CO2) {
 		this.CO2 = CO2;
 	}
 
@@ -82,7 +82,7 @@ public class Measures {
 		return humidity;
 	}
 
-	public void setHumidity(double humidity) {
+	public void setHumidity(final double humidity) {
 		this.humidity = humidity;
 	}
 
@@ -90,7 +90,7 @@ public class Measures {
 		return pressure;
 	}
 
-	public void setPressure(double pressure) {
+	public void setPressure(final double pressure) {
 		this.pressure = pressure;
 	}
 
@@ -98,7 +98,7 @@ public class Measures {
 		return noise;
 	}
 
-	public void setNoise(double noise) {
+	public void setNoise(final double noise) {
 		this.noise = noise;
 	}
 
@@ -106,7 +106,7 @@ public class Measures {
 		return minTemp;
 	}
 
-	public void setMinTemp(double minTemp) {
+	public void setMinTemp(final double minTemp) {
 		this.minTemp = minTemp;
 	}
 
@@ -114,7 +114,7 @@ public class Measures {
 		return maxTemp;
 	}
 
-	public void setMaxTemp(double maxTemp) {
+	public void setMaxTemp(final double maxTemp) {
 		this.maxTemp = maxTemp;
 	}
 
@@ -122,11 +122,11 @@ public class Measures {
 		return sum_rain_24;
 	}
 
-	public void setSum_rain_24(double sum_rain_24) {
+	public void setSum_rain_24(final double sum_rain_24) {
 		this.sum_rain_24 = sum_rain_24;
 	}
 
-	public void setSum_rain_1(double sum_rain_1) {
+	public void setSum_rain_1(final double sum_rain_1) {
 		this.sum_rain_1 = sum_rain_1;
 	}
 
@@ -134,7 +134,7 @@ public class Measures {
 		return sum_rain_1;
 	}
 
-	public void setRain(double rain) {
+	public void setRain(final double rain) {
 		this.rain = rain;
 	}
 
@@ -142,7 +142,7 @@ public class Measures {
 		return rain;
 	}
 
-	public void setWindAngle(double windAngle) {
+	public void setWindAngle(final double windAngle) {
 		this.windAngle = windAngle;
 	}
 
@@ -150,7 +150,7 @@ public class Measures {
 		return windAngle;
 	}
 
-	public void setWindStrength(double windStrength) {
+	public void setWindStrength(final double windStrength) {
 		this.windStrength = windStrength;
 	}
 
@@ -158,7 +158,7 @@ public class Measures {
 		return windStrength;
 	}
 
-	public void setGustAngle(double gustAngle) {
+	public void setGustAngle(final double gustAngle) {
 		this.gustAngle = gustAngle;
 	}
 
@@ -166,7 +166,7 @@ public class Measures {
 		return gustAngle;
 	}
 
-	public void setGustStrength(double gustStrength) {
+	public void setGustStrength(final double gustStrength) {
 		this.gustStrength = gustStrength;
 	}
 
