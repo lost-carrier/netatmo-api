@@ -59,10 +59,11 @@ public class NetatmoHttpClient {
 	 * API. It allows you to retrieve an access token in one step, using your
 	 * application's credentials and the user's credentials.
 	 * 
-	 * @param email
-	 * @param password
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 * @param email E-Mail
+	 * @param password Password
+	 * @return The Access Token.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public OAuthJSONAccessTokenResponse login(String email, String password)
 			throws OAuthSystemException, OAuthProblemException {
@@ -84,8 +85,9 @@ public class NetatmoHttpClient {
 	 * doc/methods/devicelist</a> for more information.
 	 * 
 	 * @param token The token obtained by the login function.
-	 * @throws OAuthProblemException
-	 * @throws OAuthSystemException
+	 * @return The found Stations.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public List<Station> getDevicesList(OAuthJSONAccessTokenResponse token)
 			throws OAuthSystemException, OAuthProblemException {
@@ -112,14 +114,14 @@ public class NetatmoHttpClient {
 	 * @param station The station to query
 	 * @param module The module of the station (optional)
 	 * @param types A list of the types to query
-	 * @param scales The scale to query
+	 * @param scale The scale to query
 	 * @param dateBegin Start date of the interval to query (optional)
 	 * @param dateEnd End date of the interval to query (optional)
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
-	 * @return
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 * @return The requested Measures from Netatmo.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public List<Measures> getMeasures(OAuthJSONAccessTokenResponse token, Station station, Module module,
 			List<String> types, String scale, Date dateBegin, Date dateEnd, Integer limit, Boolean realTime)
