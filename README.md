@@ -5,10 +5,24 @@ Small adaption of the original [Netatmo Android API][1] that can be used with pl
 
 Documentation of their API is available at https://dev.netatmo.com/doc/.
 
-You'll get CLIENT_ID and CLIENT_SECRET at https://dev.netatmo.com/dev/createapp.
+Installation
+--------
+Now available at Maven Central, so just add the dependency to your ```pom.xml```.
+
+    <dependencies>
+        [...]
+        <dependency>
+            <groupId>org.losty.netatmo</groupId>
+            <artifactId>netatmo-api</artifactId>
+            <version>0.1.1</version>
+        </dependency>
+        [...]
+    </dependencies>
 
 Usage
 --------
+
+You'll get CLIENT_ID and CLIENT_SECRET at https://dev.netatmo.com/dev/createapp.
 
 	NetatmoHttpClient client = new NetatmoHttpClient(CLIENT_ID, CLIENT_SECRET);
 	OAuthJSONAccessTokenResponse token = client.login(E_MAIL, PASSWORD);
