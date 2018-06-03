@@ -59,10 +59,11 @@ public class NetatmoHttpClient {
 	 * API. It allows you to retrieve an access token in one step, using your
 	 * application's credentials and the user's credentials.
 	 * 
-	 * @param email
-	 * @param password
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 * @param email E-Mail
+	 * @param password Password
+	 * @return The Access Token.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public OAuthJSONAccessTokenResponse login(final String email, final String password)
 			throws OAuthSystemException, OAuthProblemException {
@@ -114,10 +115,10 @@ public class NetatmoHttpClient {
 	 * dev.netatmo.com/en-US/resources/technical/reference/weatherstation/getstationsdata</a>
 	 * for more information.
 	 * 
-	 * @param token
-	 *            The token obtained by the login function.
-	 * @throws OAuthProblemException
-	 * @throws OAuthSystemException
+	 * @param token The token obtained by the login function.
+	 * @return The found Stations.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token)
 			throws OAuthSystemException, OAuthProblemException {
@@ -150,9 +151,9 @@ public class NetatmoHttpClient {
 	 * @param dateEnd End date of the interval to query (optional)
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
-	 * @return
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 * @return The requested Measures from Netatmo.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
 			final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
