@@ -30,7 +30,7 @@ You'll get CLIENT_ID and CLIENT_SECRET at https://dev.netatmo.com/dev/createapp.
 	List<String> types = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_PRESSURE, Params.TYPE_HUMIDITY);
 	Date dateBegin = DateTime.parse("2015-09-10T00Z").toDate();
 	Date dateEnd = DateTime.parse("2015-09-11T00Z").toDate();
-	Station station = client.getDevicesList(token).get(0);
+	Station station = client.getStationsData(token).get(0);
 	
 	List<Measures> measures = client.getMeasures(token, station, station.getModules().get(0), types, Params.SCALE_MAX, dateBegin, dateEnd, null, null);
 	for (Measures measure : measures) {
