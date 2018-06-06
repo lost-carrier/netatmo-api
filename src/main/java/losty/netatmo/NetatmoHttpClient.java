@@ -29,6 +29,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import losty.netatmo.model.Measures;
@@ -119,9 +120,10 @@ public class NetatmoHttpClient {
 	 * @return The found Stations.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws JSONException
 	 */
 	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token)
-			throws OAuthSystemException, OAuthProblemException {
+			throws OAuthSystemException, OAuthProblemException, JSONException {
 
 		OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(URL_GET_STATIONS_DATA)
 				.setAccessToken(token.getAccessToken())
@@ -159,11 +161,12 @@ public class NetatmoHttpClient {
 			final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
 					throws OAuthSystemException, OAuthProblemException {
 
-		long dateBeginMillis = 0;
+		Long dateBeginMillis = null;
 		if (dateBegin != null) {
 			dateBeginMillis = (dateBegin.getTime() / 1000);
 		}
-		long dateEndMillis = 0;
+		
+		Long dateEndMillis = null;
 		if (dateEnd != null) {
 			dateEndMillis = (dateEnd.getTime() / 1000);
 		}
@@ -194,12 +197,18 @@ public class NetatmoHttpClient {
 	 * @return
 	 * @throws OAuthSystemException
 	 * @throws OAuthProblemException
+	 * @throws JSONException
 	 */
 	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
-			final List<String> types, final String scale, final long dateBegin, final long dateEnd, final Integer limit, final Boolean realTime)
-					throws OAuthSystemException, OAuthProblemException {
+			final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
+					throws OAuthSystemException, OAuthProblemException, JSONException {
 
-		final String[] typesArr = types.toArray(new String[0]);
+		final String[] typesArr;
+		if (types != null) {
+			typesArr = types.toArray(new String[0]);
+		} else {
+			typesArr = new String[0];
+		}
 
 		final List<String> params = new ArrayList<>();
 		params.add("device_id=" + station.getId());
@@ -208,10 +217,10 @@ public class NetatmoHttpClient {
 		if (module != null) {
 			params.add("module_id=" + module.getId());
 		}
-		if (dateBegin > 0) {
+		if (dateBegin != null) {
 			params.add(String.format("date_begin=%d", dateBegin));
 		}
-		if (dateEnd > 0) {
+		if (dateEnd != null) {
 			params.add(String.format("date_end=%d", dateEnd));
 		}
 		if (limit != null) {
@@ -227,7 +236,7 @@ public class NetatmoHttpClient {
 		return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
 	}
 
-	private static String implode(String separator, String... data) {
+	private static String implode(final String separator, final String... data) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < data.length - 1; i++) {
 			sb.append(data[i]);
