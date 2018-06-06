@@ -1,6 +1,7 @@
 package losty.netatmo;
 
 import losty.netatmo.model.Measures;
+import losty.netatmo.model.Module;
 import losty.netatmo.model.Params;
 import losty.netatmo.model.Station;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -43,7 +44,7 @@ public class NetatmoHttpClientTest {
         Date dateBegin = DateTime.parse("2015-09-10T00Z").toDate();
         Date dateEnd = DateTime.parse("2015-09-11T00Z").toDate();
         Station station = new Station("My Station", "my-station-id");
-        losty.netatmo.model.Module module = new losty.netatmo.model.Module("My Module", "my-module-id", TYPE_INDOOR);
+        Module module = new Module("My Module", "my-module-id", TYPE_INDOOR);
 
 
         List<Measures> measures = client.getMeasures(token, station, module, types, Params.SCALE_MAX, dateBegin, dateEnd, null, null);
