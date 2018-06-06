@@ -65,4 +65,34 @@ public class NetatmoHttpClientTest {
         assertEquals(Double.NaN, lastMeasures.getPressure(), 0.0);
         assertEquals(84, lastMeasures.getHumidity(), 0.0);
     }
+
+    @Test
+    public void getStationsData() throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
+        OAuthResourceResponse response = mock(OAuthResourceResponse.class);
+        when(response.getBody()). thenReturn("{\"body\":{\"devices\":[{\"_id\":\"70:xx:xx:xx:xx:xx\",\"cipher_id\":\"enc:16:whatthefuckisthisshitinhere\",\"date_setup\":1366148563,\"last_setup\":1366148563,\"type\":\"NAMain\",\"last_status_store\":1528323455,\"module_name\":\"Innen\",\"firmware\":132,\"last_upgrade\":1439972537,\"wifi_status\":38,\"co2_calibrating\":false,\"station_name\":\"Station Name\",\"data_type\":[\"Temperature\",\"CO2\",\"Humidity\",\"Noise\",\"Pressure\"],\"place\":{\"altitude\":453,\"city\":\"Zurich\",\"country\":\"CH\",\"timezone\":\"Europe/Zurich\",\"location\":[8.4,47.4]},\"dashboard_data\":{\"time_utc\":1528323437,\"Temperature\":24.6,\"CO2\":751,\"Humidity\":58,\"Noise\":37,\"Pressure\":1014.9,\"AbsolutePressure\":961.6,\"min_temp\":24.6,\"max_temp\":24.6,\"date_min_temp\":1528322530,\"date_max_temp\":1528322530,\"temp_trend\":\"stable\",\"pressure_trend\":\"stable\"},\"modules\":[{\"_id\":\"02:xx:xx:xx:xx:xx\",\"type\":\"NAModule1\",\"module_name\":\"Außen\",\"data_type\":[\"Temperature\",\"Humidity\"],\"last_setup\":1366146161,\"dashboard_data\":{\"time_utc\":1489172240,\"Temperature\":8.3,\"Humidity\":100,\"min_temp\":8.3,\"max_temp\":33.2,\"date_min_temp\":1489172240,\"date_max_temp\":1489150204},\"firmware\":44,\"last_message\":1489172253,\"last_seen\":1489172240,\"rf_status\":91,\"battery_vp\":3744,\"battery_percent\":6},{\"_id\":\"05:xx:xx:xx:xx:xx\",\"type\":\"NAModule3\",\"module_name\":\"Niederschlagsmesser\",\"data_type\":[\"Rain\"],\"last_setup\":1447784487,\"dashboard_data\":{\"time_utc\":1476015169,\"Rain\":0.202,\"sum_rain_24\":0.7},\"firmware\":8,\"last_message\":1476015175,\"last_seen\":1476015169,\"rf_status\":63,\"battery_vp\":5270,\"battery_percent\":70},{\"_id\":\"03:xx:xx:xx:xx:xx\",\"type\":\"NAModule4\",\"module_name\":\"Schlafzimmer\",\"data_type\":[\"Temperature\",\"CO2\",\"Humidity\"],\"last_setup\":1459448955,\"dashboard_data\":{\"time_utc\":1528323426,\"Temperature\":23.3,\"CO2\":443,\"Humidity\":60,\"min_temp\":23.2,\"max_temp\":23.3,\"date_min_temp\":1528322504,\"date_max_temp\":1528323426,\"temp_trend\":\"up\"},\"firmware\":44,\"last_message\":1528323451,\"last_seen\":1528323426,\"rf_status\":75,\"battery_vp\":5116,\"battery_percent\":51}]}],\"user\":{\"mail\":\"netatmo@email.com\",\"administrative\":{\"country\":\"DE\",\"feel_like_algo\":0,\"lang\":\"de-DE\",\"pressureunit\":0,\"reg_locale\":\"de-CH\",\"unit\":0,\"windunit\":0}}},\"status\":\"ok\",\"time_exec\":0.18290090560913,\"time_server\":1528323598}");
+        OAuthJSONAccessTokenResponse token = mock(OAuthJSONAccessTokenResponse.class);
+        OAuthClient oAuthClient = mock(OAuthClient.class);
+        when(oAuthClient.resource(any(OAuthClientRequest.class), eq(OAuth.HttpMethod.GET), eq(OAuthResourceResponse.class))).thenReturn(response);
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        FieldUtils.writeField(client, "oAuthClient", oAuthClient, true);
+
+
+        List<Station> stations = client.getStationsData(token);
+
+        assertNotNull(stations);
+        assertEquals(1, stations.size());
+        Station station = stations.get(0);
+        assertEquals("70:xx:xx:xx:xx:xx", station.getId());
+        assertEquals("Station Name", station.getName());
+        List<Module> modules = station.getModules();
+        assertNotNull(modules);
+        assertEquals(4, modules.size());
+        assertEquals("70:xx:xx:xx:xx:xx", modules.get(0).getId());
+        assertEquals("Innen", modules.get(0).getName());
+        assertEquals(TYPE_INDOOR, modules.get(0).getType());
+        assertEquals("03:xx:xx:xx:xx:xx", modules.get(3).getId());
+        assertEquals("Schlafzimmer", modules.get(3).getName());
+        assertEquals(TYPE_INDOOR, modules.get(3).getType());
+    }
 }
