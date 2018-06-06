@@ -85,12 +85,12 @@ public class NetatmoHttpClient {
 	/**
 	 * Retrieve an refreshed or renewed access token, using your
 	 * refresh token and the user's credentials.
-	 * 
-	 * @param token
-	 * @param email
-	 * @param password
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 *
+	 * @param token The token obtained by the login function.
+	 * @param email E-Mail
+	 * @param password Password
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public OAuthJSONAccessTokenResponse refreshToken(final OAuthJSONAccessTokenResponse token, final String email, final String password) throws OAuthSystemException, OAuthProblemException {
 		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
@@ -120,7 +120,7 @@ public class NetatmoHttpClient {
 	 * @return The found Stations.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
-	 * @throws JSONException
+	 * @throws JSONException If paring goes wrong.
 	 */
 	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token)
 			throws OAuthSystemException, OAuthProblemException, JSONException {
