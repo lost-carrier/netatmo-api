@@ -174,8 +174,6 @@ public class NetatmoHttpClient {
 		return getMeasures(token, station, module, types, scale, dateBeginMillis, dateEndMillis, limit, realTime);
 
 	}
-	
-
 
 	/**
 	 * Returns the list of measures for a device or module owned by the user.
@@ -245,5 +243,4 @@ public class NetatmoHttpClient {
 		sb.append(data[data.length - 1].trim());
 		return sb.toString();
 	}
-
 }
