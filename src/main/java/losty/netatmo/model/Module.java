@@ -16,6 +16,7 @@
 package losty.netatmo.model;
 
 public class Module {
+
     public static final String TYPE_OUTDOOR = "NAModule1";
     public static final String TYPE_WIND_GAUGE = "NAModule2";
     public static final String TYPE_RAIN_GAUGE = "NAModule3";
