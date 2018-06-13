@@ -186,9 +186,9 @@ public class NetatmoHttpClient {
 	 * @param dateEnd End date of the interval to query (optional)
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
-	 * @return
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+     * @return The requested Measures from Netatmo.
+     * @throws OAuthSystemException When something goes wrong with OAuth.
+     * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
 	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
 			final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
