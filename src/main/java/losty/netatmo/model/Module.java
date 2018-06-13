@@ -24,7 +24,6 @@ public class Module {
     private String name;
     private String id;
     private String type;
-    private Measures measures;
 
     public Module(final String name, final String id, final String type) {
         this.name = name;
@@ -54,13 +53,5 @@ public class Module {
 
     public void setType(final String type) {
         this.type = type;
-    }
-
-    public Measures getMeasures() {
-        return measures;
-    }
-
-    public void setMeasures(final Measures measures) {
-        this.measures = measures;
     }
 }
