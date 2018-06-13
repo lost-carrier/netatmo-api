@@ -147,5 +147,142 @@ public class NetatmoUtils {
 
 		return result;
 	}
-	
+
+	public static List<Map.Entry<Station, Measures>> parsePublicData(final JSONObject response) throws JSONException {
+        final List<Map.Entry<Station, Measures>> result = new ArrayList<>();
+
+        if (response == null) {
+            return result;
+        }
+
+        final JSONArray body = response.getJSONArray("body");
+        for (int i = 0; i < body.length(); i++) {
+
+            final JSONObject data = body.getJSONObject(i);
+            final Station station = parseStation(data);
+            final List<Module> modules = parseModules(data.getJSONObject("module_types"));
+            final Map<String, Station> stationsById = determineStations(station, modules);
+
+            final JSONObject measuresAllModules = data.getJSONObject("measures");
+            for (String measuresModuleId : measuresAllModules.keySet()) {
+
+                final JSONObject measuresThisModule = measuresAllModules.getJSONObject(measuresModuleId);
+                final Station stationForModule = stationsById.get(measuresModuleId);
+                Measures measures = null;
+                if (stationForModule == null) {
+                    throw new RuntimeException(String.format("Cannot find moduleId=%s", measuresModuleId));
+                } else if (stationForModule.getModules().size() == 0) {
+                    measures = parseMeasuresMethod1(measuresThisModule);
+                } else switch (stationForModule.getModules().get(0).getType()) {
+                    case Module.TYPE_OUTDOOR:
+                        measures = parseMeasuresMethod1(measuresThisModule);
+                        break;
+                    case Module.TYPE_WIND_GAUGE:
+                        measures = parseMeasuresMethod2(measuresThisModule);
+                        break;
+                    case Module.TYPE_RAIN_GAUGE:
+                        measures = parseMeasuresMethod2(measuresThisModule);
+                        break;
+                    case Module.TYPE_INDOOR:
+                        measures = parseMeasuresMethod1(measuresThisModule);
+                        break;
+                }
+                result.add(new AbstractMap.SimpleImmutableEntry<>(stationForModule, measures));
+            }
+
+        }
+
+        return result;
+    }
+
+    private static Map<String, Station> determineStations(Station station, List<Module> modules) {
+	    final Map<String, Station> ret = new HashMap<>();
+	    ret.put(station.getId(), station);
+	    for (Module module : modules) {
+	        final Station stationForModule = new Station(station);
+            stationForModule.setModules(Collections.singletonList(module));
+            ret.put(module.getId(), stationForModule);
+        }
+        return ret;
+    }
+
+    private static Measures parseMeasuresMethod1(JSONObject measuresThisModule) {
+        final JSONArray types = measuresThisModule.getJSONArray("type");
+        final JSONObject res = measuresThisModule.getJSONObject("res");
+        final String timestampStr = res.keys().next();
+        final JSONArray values = res.getJSONArray(timestampStr);
+        final Measures ret = new Measures();
+        long timestamp = Long.parseLong(timestampStr);
+        ret.setBeginTime(timestamp);
+        for (int i = 0; i < types.length(); i++) {
+            final String type = types.getString(i);
+            double value = values.getDouble(i);
+            switch (type) {
+                case "temperature":
+                    ret.setTemperature(value);
+                    break;
+                case "humidity":
+                    ret.setHumidity(value);
+                    break;
+                case "pressure":
+                    ret.setPressure(value);
+                    break;
+            }
+        }
+        return ret;
+    }
+
+    private static Measures parseMeasuresMethod2(JSONObject measuresThisModule) {
+	    Measures ret = new Measures();
+	    for (String key : measuresThisModule.keySet()) {
+	        switch (key) {
+                case "rain_60min":
+                    ret.setSum_rain_1(measuresThisModule.getDouble(key));
+                    break;
+                case "rain_24h":
+                    ret.setSum_rain_24(measuresThisModule.getDouble(key));
+                    break;
+                case "rain_live":
+                    ret.setRain(measuresThisModule.getDouble(key));
+                    break;
+                case "wind_strength":
+                    ret.setWindStrength(measuresThisModule.getDouble(key));
+                    break;
+                case "wind_angle":
+                    ret.setWindAngle(measuresThisModule.getDouble(key));
+                    break;
+                case "gust_strength":
+                    ret.setGustStrength(measuresThisModule.getDouble(key));
+                    break;
+                case "gust_angle":
+                    ret.setGustAngle(measuresThisModule.getDouble(key));
+                    break;
+                case "rain_timeutc":
+                case "wind_timeutc":
+                    ret.setBeginTime(measuresThisModule.getLong(key));
+                    break;
+            }
+        }
+        return ret;
+    }
+
+    private static List<Module> parseModules(JSONObject modules) {
+	    List<Module> ret = new ArrayList<>();
+	    for (String moduleId : modules.keySet()) {
+	        String moduleType = modules.getString(moduleId);
+	        Module module = new Module(null, moduleId, moduleType);
+	        ret.add(module);
+        }
+        
+        return ret;
+    }
+
+    private static Station parseStation(JSONObject data) {
+        final String id = data.getString("_id");
+        final JSONObject place = data.getJSONObject("place");
+        final JSONArray location = place.getJSONArray("location");
+//        final String name = String.format("%f,%f,%f", location.getDouble(1), location.getDouble(0), place.getDouble("altitude"));
+        final String name = String.format("%f,%f", location.getDouble(1), location.getDouble(0));
+        return new Station(name, id);
+    }
 }

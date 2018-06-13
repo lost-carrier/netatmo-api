@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static losty.netatmo.model.Module.TYPE_INDOOR;
 import static org.junit.Assert.assertEquals;
@@ -95,4 +96,69 @@ public class NetatmoHttpClientTest {
         assertEquals("Schlafzimmer", modules.get(3).getName());
         assertEquals(TYPE_INDOOR, modules.get(3).getType());
     }
+
+    @Test
+    public void getPublicData() throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
+        OAuthResourceResponse response = mock(OAuthResourceResponse.class);
+        when(response.getBody()). thenReturn("{\"body\":[{\"_id\":\"70:ee:50:17:eb:b6\",\"place\":{\"location\":[8.7272458797622,41.913026000486],\"altitude\":6,\"timezone\":\"Europe/Paris\"},\"mark\":3,\"measures\":{\"02:00:00:17:d0:b2\":{\"res\":{\"1528826083\":[23,75]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:17:eb:b6\":{\"res\":{\"1528826084\":[1010.9]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:17:d0:b2\"],\"module_types\":{\"02:00:00:17:d0:b2\":\"NAModule1\"}},{\"_id\":\"70:ee:50:02:b3:2c\",\"place\":{\"location\":[8.7115285956954,41.909349035887],\"altitude\":11,\"timezone\":\"Europe/Paris\"},\"mark\":10,\"measures\":{\"02:00:00:02:d8:be\":{\"res\":{\"1528826231\":[24,66]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:02:b3:2c\":{\"res\":{\"1528826245\":[1012.4]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:02:d8:be\"],\"module_types\":{\"02:00:00:02:d8:be\":\"NAModule1\"}},{\"_id\":\"70:ee:50:02:be:88\",\"place\":{\"location\":[8.7395163329231,41.918458845976],\"altitude\":8,\"timezone\":\"Europe/Paris\"},\"mark\":5,\"measures\":{\"02:00:00:02:d1:9e\":{\"res\":{\"1528826101\":[24.1,72]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:02:be:88\":{\"res\":{\"1528826111\":[1012.6]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:02:d1:9e\"],\"module_types\":{\"02:00:00:02:d1:9e\":\"NAModule1\"}},{\"_id\":\"70:ee:50:01:49:9e\",\"place\":{\"location\":[8.7703885,41.971943],\"altitude\":169,\"timezone\":\"Europe/Paris\"},\"mark\":13,\"measures\":{\"02:00:00:01:3f:b8\":{\"res\":{\"1528826025\":[24.3,67]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:00:15:36\":{\"rain_60min\":0,\"rain_24h\":0.303,\"rain_live\":0,\"rain_timeutc\":1528826057},\"06:00:00:02:35:ae\":{\"wind_strength\":9,\"wind_angle\":243,\"gust_strength\":19,\"gust_angle\":238,\"wind_timeutc\":1528826064},\"70:ee:50:01:49:9e\":{\"res\":{\"1528826068\":[1011.1]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:01:3f:b8\",\"05:00:00:00:15:36\",\"06:00:00:02:35:ae\"],\"module_types\":{\"02:00:00:01:3f:b8\":\"NAModule1\",\"05:00:00:00:15:36\":\"NAModule3\",\"06:00:00:02:35:ae\":\"NAModule2\"}},{\"_id\":\"70:ee:50:1e:10:d2\",\"place\":{\"location\":[8.740494,41.946683],\"timezone\":\"Europe/Paris\"},\"measures\":{\"02:00:00:1d:f4:26\":{\"res\":{\"1528826132\":[22.8,73]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:1e:10:d2\":{\"res\":{\"1528826170\":[1002.2]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:1d:f4:26\"],\"module_types\":{\"02:00:00:1d:f4:26\":\"NAModule1\"}},{\"_id\":\"70:ee:50:13:61:5c\",\"place\":{\"location\":[8.7245946037049,41.965660480989],\"altitude\":184,\"timezone\":\"Europe/Paris\"},\"measures\":{\"70:ee:50:13:61:5c\":{\"res\":{\"1528825916\":[1012.7]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:13:52:22\"],\"module_types\":{\"02:00:00:13:52:22\":\"NAModule1\"}},{\"_id\":\"70:ee:50:1a:fc:7e\",\"place\":{\"location\":[8.5974025655762,42.138857026067],\"altitude\":76,\"timezone\":\"Europe/Paris\"},\"mark\":0,\"measures\":{\"02:00:00:1a:f3:72\":{\"res\":{\"1528825843\":[24.8,66]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:01:bb:a2\":{\"rain_60min\":0,\"rain_24h\":5.05,\"rain_live\":0,\"rain_timeutc\":1528825844},\"06:00:00:00:99:de\":{\"wind_strength\":1,\"wind_angle\":135,\"gust_strength\":3,\"gust_angle\":180,\"wind_timeutc\":1528825844},\"70:ee:50:1a:fc:7e\":{\"res\":{\"1528825844\":[1009.3]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:1a:f3:72\",\"05:00:00:01:bb:a2\",\"06:00:00:00:99:de\"],\"module_types\":{\"02:00:00:1a:f3:72\":\"NAModule1\",\"05:00:00:01:bb:a2\":\"NAModule3\",\"06:00:00:00:99:de\":\"NAModule2\"}},{\"_id\":\"70:ee:50:28:ac:d2\",\"place\":{\"location\":[8.5944775,42.1315259],\"altitude\":23,\"timezone\":\"Europe/Paris\"},\"mark\":0,\"measures\":{\"02:00:00:27:1d:4c\":{\"res\":{\"1528825993\":[23.9,72]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:03:b5:ca\":{\"rain_60min\":0,\"rain_24h\":0,\"rain_live\":0,\"rain_timeutc\":1528825844},\"06:00:00:02:01:a6\":{\"wind_strength\":1,\"wind_angle\":321,\"gust_strength\":3,\"gust_angle\":260,\"wind_timeutc\":1528826019},\"70:ee:50:28:ac:d2\":{\"res\":{\"1528826021\":[1013.1]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:27:1d:4c\",\"06:00:00:02:01:a6\",\"05:00:00:03:b5:ca\"],\"module_types\":{\"02:00:00:27:1d:4c\":\"NAModule1\",\"06:00:00:02:01:a6\":\"NAModule2\",\"05:00:00:03:b5:ca\":\"NAModule3\"}},{\"_id\":\"70:ee:50:22:e8:c6\",\"place\":{\"location\":[8.68583,42.11846],\"altitude\":58,\"timezone\":\"Europe/Paris\"},\"mark\":14,\"measures\":{\"02:00:00:22:e7:d6\":{\"res\":{\"1528826375\":[20.2,96]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:22:e8:c6\":{\"res\":{\"1528826375\":[1008.7]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:22:e7:d6\"],\"module_types\":{\"02:00:00:22:e7:d6\":\"NAModule1\"}},{\"_id\":\"70:ee:50:2d:00:76\",\"place\":{\"location\":[8.7585094603271,42.563921350366],\"altitude\":0,\"timezone\":\"Europe/Paris\"},\"mark\":5,\"measures\":{\"02:00:00:2c:c0:ae\":{\"res\":{\"1528826150\":[23.5,69]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:03:ce:e8\":{\"rain_60min\":0,\"rain_24h\":0,\"rain_live\":0,\"rain_timeutc\":1528826188},\"06:00:00:02:f0:46\":{\"wind_strength\":7,\"wind_angle\":233,\"gust_strength\":18,\"gust_angle\":234,\"wind_timeutc\":1528826195},\"70:ee:50:2d:00:76\":{\"res\":{\"1528826198\":[1015.1]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:2c:c0:ae\",\"05:00:00:03:ce:e8\",\"06:00:00:02:f0:46\"],\"module_types\":{\"02:00:00:2c:c0:ae\":\"NAModule1\",\"05:00:00:03:ce:e8\":\"NAModule3\",\"06:00:00:02:f0:46\":\"NAModule2\"}},{\"_id\":\"70:ee:50:2c:77:7a\",\"place\":{\"location\":[8.9091853,41.6992683],\"timezone\":\"Europe/Paris\"},\"measures\":{\"02:00:00:2c:76:4e\":{\"res\":{\"1528826255\":[24.7,90]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:2c:77:7a\":{\"res\":{\"1528826295\":[995.7]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:2c:76:4e\"],\"module_types\":{\"02:00:00:2c:76:4e\":\"NAModule1\"}},{\"_id\":\"70:ee:50:19:18:68\",\"place\":{\"location\":[8.8079093,41.8867502],\"altitude\":230,\"timezone\":\"Europe/Paris\"},\"mark\":12,\"measures\":{\"02:00:00:19:3d:d4\":{\"res\":{\"1528826285\":[24.2,69]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:19:18:68\":{\"res\":{\"1528826298\":[1033.2]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:19:3d:d4\"],\"module_types\":{\"02:00:00:19:3d:d4\":\"NAModule1\"}},{\"_id\":\"70:ee:50:28:ac:32\",\"place\":{\"location\":[8.8444082,41.9079819],\"altitude\":0,\"timezone\":\"Europe/Paris\"},\"mark\":5,\"measures\":{\"02:00:00:28:c0:d8\":{\"res\":{\"1528825679\":[25,69]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:03:1c:2a\":{\"rain_60min\":0,\"rain_24h\":3.737,\"rain_live\":0,\"rain_timeutc\":1528825704},\"06:00:00:01:4f:38\":{\"wind_strength\":1,\"wind_angle\":11,\"gust_strength\":3,\"gust_angle\":0,\"wind_timeutc\":1528825711},\"70:ee:50:28:ac:32\":{\"res\":{\"1528825711\":[1011.4]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:28:c0:d8\",\"05:00:00:03:1c:2a\",\"06:00:00:01:4f:38\"],\"module_types\":{\"02:00:00:28:c0:d8\":\"NAModule1\",\"05:00:00:03:1c:2a\":\"NAModule3\",\"06:00:00:01:4f:38\":\"NAModule2\"}},{\"_id\":\"70:ee:50:01:f2:ae\",\"place\":{\"location\":[8.824787,41.904886],\"altitude\":46,\"timezone\":\"Europe/Paris\"},\"mark\":13,\"measures\":{\"02:00:00:01:c3:c4\":{\"res\":{\"1528826308\":[23.1,76]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:00:9b:3c\":{\"rain_60min\":0,\"rain_24h\":0.404,\"rain_live\":0,\"rain_timeutc\":1528826308},\"70:ee:50:01:f2:ae\":{\"res\":{\"1528826315\":[1011.8]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:01:c3:c4\",\"05:00:00:00:9b:3c\"],\"module_types\":{\"02:00:00:01:c3:c4\":\"NAModule1\",\"05:00:00:00:9b:3c\":\"NAModule3\"}},{\"_id\":\"70:ee:50:2c:ef:2c\",\"place\":{\"location\":[3.752898,43.447014],\"timezone\":\"Europe/Paris\"},\"measures\":{\"02:00:00:2c:71:ec\":{\"res\":{\"1528826331\":[24.3,49]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:2c:ef:2c\":{\"res\":{\"1528826376\":[1000.5]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:2c:71:ec\"],\"module_types\":{\"02:00:00:2c:71:ec\":\"NAModule1\"}},{\"_id\":\"70:ee:50:29:08:a2\",\"place\":{\"location\":[3.7512656,43.4529247],\"altitude\":10,\"timezone\":\"Europe/Madrid\"},\"mark\":8,\"measures\":{\"02:00:00:29:5a:76\":{\"res\":{\"1528826305\":[26.4,49]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:29:08:a2\":{\"res\":{\"1528826345\":[1007.5]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:29:5a:76\"],\"module_types\":{\"02:00:00:29:5a:76\":\"NAModule1\"}},{\"_id\":\"70:ee:50:1f:5f:74\",\"place\":{\"location\":[4.430916,43.455831],\"timezone\":\"Europe/Paris\"},\"measures\":{\"02:00:00:1f:77:06\":{\"res\":{\"1528826350\":[24.4,74]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:02:fd:10\":{\"rain_60min\":0,\"rain_24h\":0.101,\"rain_live\":0,\"rain_timeutc\":1528826357},\"70:ee:50:1f:5f:74\":{\"res\":{\"1528826369\":[1005.1]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:1f:77:06\",\"05:00:00:02:fd:10\"],\"module_types\":{\"02:00:00:1f:77:06\":\"NAModule1\",\"05:00:00:02:fd:10\":\"NAModule3\"}},{\"_id\":\"70:ee:50:2a:ea:04\",\"place\":{\"location\":[4.7250787,43.4643594],\"altitude\":3,\"timezone\":\"Europe/Paris\"},\"mark\":14,\"measures\":{\"02:00:00:2b:60:d2\":{\"res\":{\"1528826030\":[21.6,72]},\"type\":[\"temperature\",\"humidity\"]},\"05:00:00:04:73:8e\":{\"rain_60min\":0,\"rain_24h\":0,\"rain_live\":0,\"rain_timeutc\":1528826049},\"06:00:00:02:55:f0\":{\"wind_strength\":7,\"wind_angle\":217,\"gust_strength\":12,\"gust_angle\":216,\"wind_timeutc\":1528826056},\"70:ee:50:2a:ea:04\":{\"res\":{\"1528826062\":[1012.7]},\"type\":[\"pressure\"]}},\"modules\":[\"02:00:00:2b:60:d2\",\"05:00:00:04:73:8e\",\"06:00:00:02:55:f0\"],\"module_types\":{\"02:00:00:2b:60:d2\":\"NAModule1\",\"05:00:00:04:73:8e\":\"NAModule3\",\"06:00:00:02:55:f0\":\"NAModule2\"}}],\"status\":\"ok\",\"time_exec\":1.3139359951019,\"time_server\":1528826441}");
+        OAuthJSONAccessTokenResponse token = mock(OAuthJSONAccessTokenResponse.class);
+        OAuthClient oAuthClient = mock(OAuthClient.class);
+        when(oAuthClient.resource(any(OAuthClientRequest.class), eq(OAuth.HttpMethod.GET), eq(OAuthResourceResponse.class))).thenReturn(response);
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        FieldUtils.writeField(client, "oAuthClient", oAuthClient, true);
+
+        List<Map.Entry<Station, Measures>> measures = client.getPublicData(token, 43.1, 8.5, 42.6, 4.4, Arrays.asList("temperature","humidity"), false);
+
+        assertEquals(49, measures.size());
+        Map.Entry<Station, Measures> s1m0 = measures.get(0);
+        assertEquals("70:ee:50:17:eb:b6", s1m0.getKey().getId());
+        assertEquals("41,913026,8,727246", s1m0.getKey().getName());
+        assertEquals(0, s1m0.getKey().getModules().size());
+        assertEquals(1528826084, s1m0.getValue().getBeginTime());
+        assertEquals(1010.9, s1m0.getValue().getPressure(),0.0);
+
+        Map.Entry<Station, Measures> s1m1 = measures.get(1);
+        assertEquals("70:ee:50:17:eb:b6", s1m1.getKey().getId());
+        assertEquals("41,913026,8,727246", s1m1.getKey().getName());
+        assertEquals(1, s1m1.getKey().getModules().size());
+        assertEquals("02:00:00:17:d0:b2", s1m1.getKey().getModules().get(0).getId());
+        assertEquals(null, s1m1.getKey().getModules().get(0).getName());
+        assertEquals(Module.TYPE_OUTDOOR, s1m1.getKey().getModules().get(0).getType());
+        assertEquals(1528826083, s1m1.getValue().getBeginTime());
+        assertEquals(23.0, s1m1.getValue().getTemperature(),0.0);
+        assertEquals(75.0, s1m1.getValue().getHumidity(),0.0);
+
+        Map.Entry<Station, Measures> s24 = measures.get(24);
+        assertEquals("70:ee:50:2d:00:76", s24.getKey().getId());
+        assertEquals("42,563921,8,758509", s24.getKey().getName());
+        assertEquals(1, s24.getKey().getModules().size());
+        assertEquals("06:00:00:02:f0:46", s24.getKey().getModules().get(0).getId());
+        assertEquals(null, s24.getKey().getModules().get(0).getName());
+        assertEquals(Module.TYPE_WIND_GAUGE, s24.getKey().getModules().get(0).getType());
+        assertEquals(1528826195, s24.getValue().getBeginTime());
+        assertEquals(233.0, s24.getValue().getWindAngle(),0.0);
+        assertEquals(7.0, s24.getValue().getWindStrength(),0.0);
+        assertEquals(234.0, s24.getValue().getGustAngle(),0.0);
+        assertEquals(18.0, s24.getValue().getGustStrength(),0.0);
+
+        Map.Entry<Station, Measures> s26 = measures.get(26);
+        assertEquals("70:ee:50:2d:00:76", s26.getKey().getId());
+        assertEquals("42,563921,8,758509", s26.getKey().getName());
+        assertEquals(1, s26.getKey().getModules().size());
+        assertEquals("05:00:00:03:ce:e8", s26.getKey().getModules().get(0).getId());
+        assertEquals(null, s26.getKey().getModules().get(0).getName());
+        assertEquals(Module.TYPE_RAIN_GAUGE, s26.getKey().getModules().get(0).getType());
+        assertEquals(1528826188, s26.getValue().getBeginTime());
+        assertEquals(0.0, s26.getValue().getRain(),0.0);
+        assertEquals(0.0, s26.getValue().getSum_rain_1(),0.0);
+        assertEquals(0.0, s26.getValue().getSum_rain_24(),0.0);
+    }
+
+    /*
+        NetatmoHttpClient client = new NetatmoHttpClient("55806e1f485a8870a18b45aa", "1FoOm3C2kwagxonkod50Ldq2lIipqm1jf");
+        OAuthJSONAccessTokenResponse token = client.login("netatmo@losty.ch", "connectnetatmo");
+        List<Measures> measures = client.getPublicData(token, 43.1, 8.5, 42.6, 4.4, null, false);
+
+     */
 }

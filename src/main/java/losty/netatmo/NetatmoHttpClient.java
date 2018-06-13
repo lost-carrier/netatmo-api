@@ -44,6 +44,7 @@ public class NetatmoHttpClient {
     private final static String URL_REQUEST_TOKEN = URL_BASE + "/oauth2/token";
     private final static String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
     private final static String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
+    private final static String URL_GET_PUBLIC_DATA = URL_BASE + "/api/getpublicdata";
 
 	private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
@@ -247,6 +248,50 @@ public class NetatmoHttpClient {
 
 		return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
 	}
+
+    /**
+     * Retrieves publicly shared weather data from Outdoor Modules within a predefined area.
+     * See <a href=
+     * "https://dev.netatmo.com/en-US/resources/technical/reference/weatherapi/getpublicdata">
+     * dev.netatmo.com/en-US/resources/technical/reference/weatherapi/getpublicdata</a>
+     * for more information.
+     *
+     * @param token The token obtained by the login function.
+     * @param lat_ne Latitude of the north east corner of the requested area. -85 <= lat_ne <= 85 and lat_ne>lat_sw
+     * @param lon_ne Longitude of the north east corner of the requested area. -180 <= lon_ne <= 180 and lon_ne>lon_sw
+     * @param lat_sw Latitude of the south west corner of the requested area. -85 <= lat_sw <= 85
+     * @param lon_sw Longitude of the south west corner of the requested area. -180 <= lon_sw <= 180
+     * @param types To filter stations based on relevant measurements you want (e.g. rain will only return stations with rain gauges). Default is no filter. You can find all measurements available on the Thermostat page.
+     * @param filter True to exclude station with abnormal temperature measures. Default is false.
+     * @return The requested weather data.
+     * @throws OAuthSystemException When something goes wrong with OAuth.
+     * @throws OAuthProblemException When something goes wrong with OAuth.
+     */
+    public List<Map.Entry<Station, Measures>> getPublicData(final OAuthJSONAccessTokenResponse token,
+                                                             double lat_ne, double lon_ne, double lat_sw, double lon_sw,
+                                                             final List<String> types, final Boolean filter)
+            throws OAuthSystemException, OAuthProblemException {
+
+        final List<String> params = new ArrayList<>();
+        params.add("lat_ne=" + lat_ne);
+        params.add("lon_ne=" + lon_ne);
+        params.add("lat_sw=" + lat_sw);
+        params.add("lon_sw=" + lon_sw);
+        if (types != null) {
+            params.add("required_data=" + implode(",", types.toArray(new String[0])));
+        }
+        if (filter != null) {
+            params.add("filter=" + filter);
+        }
+        final String query = implode("&", params.toArray(new String[0]));
+        final String request = URL_GET_PUBLIC_DATA + "?" + query;
+        final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
+                .setAccessToken(token.getAccessToken())
+                .buildQueryMessage();
+        final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
+        return NetatmoUtils.parsePublicData(new JSONObject(resourceResponse.getBody()));
+    }
 
 	private static String implode(final String separator, final String... data) {
 

@@ -29,6 +29,12 @@ public class Station {
         this.modules = new ArrayList<>();
     }
 
+    public Station(final Station station) {
+        this.name = station.getName();
+        this.id = station.getId();
+        this.modules = new ArrayList<>(station.getModules());
+    }
+
     public String getName() {
         return name;
     }
