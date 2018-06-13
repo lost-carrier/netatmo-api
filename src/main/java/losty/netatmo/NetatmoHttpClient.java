@@ -257,10 +257,10 @@ public class NetatmoHttpClient {
      * for more information.
      *
      * @param token The token obtained by the login function.
-     * @param lat_ne Latitude of the north east corner of the requested area. -85 <= lat_ne <= 85 and lat_ne>lat_sw
-     * @param lon_ne Longitude of the north east corner of the requested area. -180 <= lon_ne <= 180 and lon_ne>lon_sw
-     * @param lat_sw Latitude of the south west corner of the requested area. -85 <= lat_sw <= 85
-     * @param lon_sw Longitude of the south west corner of the requested area. -180 <= lon_sw <= 180
+     * @param lat_ne Latitude of the north east corner of the requested area. -85.0 to +85.0 and (with lat_ne greater than lat_sw)
+     * @param lon_ne Longitude of the north east corner of the requested area. -180.0 to +180.0 (with lon_ne greater than lon_sw)
+     * @param lat_sw Latitude of the south west corner of the requested area. -85.0 to +85.0
+     * @param lon_sw Longitude of the south west corner of the requested area. -180 to +180.0
      * @param types To filter stations based on relevant measurements you want (e.g. rain will only return stations with rain gauges). Default is no filter. You can find all measurements available on the Thermostat page.
      * @param filter True to exclude station with abnormal temperature measures. Default is false.
      * @return The requested weather data.
