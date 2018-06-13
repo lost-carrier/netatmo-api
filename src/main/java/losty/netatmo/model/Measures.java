@@ -17,7 +17,7 @@ package losty.netatmo.model;
 
 public class Measures {
 
-	public static final double NO_DATA = Double.NaN;
+	private static final double NO_DATA = Double.NaN;
 
 	private long beginTime;
 

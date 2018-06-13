@@ -40,10 +40,10 @@ public class NetatmoHttpClient {
 
 	// API URLs that will be used for requests, see:
 	// https://dev.netatmo.com/doc.
-	protected final static String URL_BASE = "https://api.netatmo.net";
-	protected final static String URL_REQUEST_TOKEN = URL_BASE + "/oauth2/token";
-	protected final static String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
-	protected final static String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
+	private final static String URL_BASE = "https://api.netatmo.net";
+    private final static String URL_REQUEST_TOKEN = URL_BASE + "/oauth2/token";
+    private final static String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
+    private final static String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
 
 	private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
