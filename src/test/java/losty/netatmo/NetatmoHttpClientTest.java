@@ -78,7 +78,7 @@ public class NetatmoHttpClientTest {
         FieldUtils.writeField(client, "oAuthClient", oAuthClient, true);
 
 
-        List<Station> stations = client.getStationsData(token);
+        List<Station> stations = client.getStationsData(token, null, null);
 
         assertNotNull(stations);
         assertEquals(1, stations.size());

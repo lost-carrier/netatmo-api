@@ -115,15 +115,29 @@ public class NetatmoHttpClient {
 	 * for more information.
 	 * 
 	 * @param token The token obtained by the login function.
+     * @param station The station to query (optional)
+     * @param getFavorites Whether to fetch favorites, too (optional)
 	 * @return The found Stations.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 * @throws JSONException If paring goes wrong.
 	 */
-	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token)
+	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token, final Station station, final Boolean getFavorites)
 			throws OAuthSystemException, OAuthProblemException, JSONException {
 
-		OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(URL_GET_STATIONS_DATA)
+		final List<String> params = new ArrayList<>();
+
+		if (station != null) {
+			params.add("device_id=" + station.getId());
+		}
+
+		if (getFavorites != null) {
+			params.add("get_favorites=" + getFavorites);
+		}
+
+		final String query = implode("&", params.toArray(new String[0]));
+		final String request = URL_GET_STATIONS_DATA + "?" + query;
+		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
 				.setAccessToken(token.getAccessToken())
 				.buildQueryMessage();
 		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
