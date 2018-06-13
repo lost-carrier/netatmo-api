@@ -249,12 +249,17 @@ public class NetatmoHttpClient {
 	}
 
 	private static String implode(final String separator, final String... data) {
+
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < data.length - 1; i++) {
 			sb.append(data[i]);
 			sb.append(separator);
 		}
-		sb.append(data[data.length - 1].trim());
+
+		if (data.length > 0) {
+            sb.append(data[data.length - 1].trim());
+        }
+
 		return sb.toString();
 	}
 }
