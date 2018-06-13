@@ -15,10 +15,9 @@
  */
 package losty.netatmo;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import losty.netatmo.model.Measures;
+import losty.netatmo.model.Module;
+import losty.netatmo.model.Station;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -32,9 +31,10 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import losty.netatmo.model.Measures;
-import losty.netatmo.model.Module;
-import losty.netatmo.model.Station;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class NetatmoHttpClient {
 
@@ -79,7 +79,6 @@ public class NetatmoHttpClient {
 				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
-
 	}
 
 	/**
@@ -104,7 +103,6 @@ public class NetatmoHttpClient {
 				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
-
 	}
 
 	/**
@@ -128,12 +126,9 @@ public class NetatmoHttpClient {
 		OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(URL_GET_STATIONS_DATA)
 				.setAccessToken(token.getAccessToken())
 				.buildQueryMessage();
-
-		OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET,
-				OAuthResourceResponse.class);
+		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
 		return NetatmoUtils.parseStationsData(new JSONObject(resourceResponse.getBody()));
-
 	}
 
 	/**
@@ -165,14 +160,13 @@ public class NetatmoHttpClient {
 		if (dateBegin != null) {
 			dateBeginMillis = (dateBegin.getTime() / 1000);
 		}
-		
+
 		Long dateEndMillis = null;
 		if (dateEnd != null) {
 			dateEndMillis = (dateEnd.getTime() / 1000);
 		}
 
 		return getMeasures(token, station, module, types, scale, dateBeginMillis, dateEndMillis, limit, realTime);
-
 	}
 
 	/**
@@ -195,11 +189,10 @@ public class NetatmoHttpClient {
 	 * @return
 	 * @throws OAuthSystemException
 	 * @throws OAuthProblemException
-	 * @throws JSONException
 	 */
 	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
 			final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
-					throws OAuthSystemException, OAuthProblemException, JSONException {
+					throws OAuthSystemException, OAuthProblemException {
 
 		final String[] typesArr;
 		if (types != null) {
@@ -212,25 +205,32 @@ public class NetatmoHttpClient {
 		params.add("device_id=" + station.getId());
 		params.add("scale=" + scale);
 		params.add("type=" + implode(",", typesArr));
+
 		if (module != null) {
 			params.add("module_id=" + module.getId());
 		}
+
 		if (dateBegin != null) {
 			params.add(String.format("date_begin=%d", dateBegin));
 		}
+
 		if (dateEnd != null) {
 			params.add(String.format("date_end=%d", dateEnd));
 		}
+
 		if (limit != null) {
 			params.add(String.format("limit=%d", limit));
 		}
+
 		if (realTime != null) {
 			params.add(String.format("real_time=%b", realTime));
 		}
+
 		final String query = implode("&", params.toArray(new String[0]));
 		final String request = URL_GET_MEASURES + "?" + query;
 		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).setAccessToken(token.getAccessToken()).buildQueryMessage();
 		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
 		return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
 	}
 

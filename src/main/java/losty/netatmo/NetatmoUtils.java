@@ -15,8 +15,8 @@
  */
 package losty.netatmo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,7 +140,6 @@ public class NetatmoUtils {
 					default:
 						//
 					}
-
 				}
 				result.add(measures);
 			}
