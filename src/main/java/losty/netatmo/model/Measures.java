@@ -126,52 +126,51 @@ public class Measures {
 		this.sum_rain_24 = sum_rain_24;
 	}
 
-	public void setSum_rain_1(final double sum_rain_1) {
-		this.sum_rain_1 = sum_rain_1;
-	}
-
 	public double getSum_rain_1() {
 		return sum_rain_1;
 	}
 
-	public void setRain(final double rain) {
-		this.rain = rain;
+	public void setSum_rain_1(final double sum_rain_1) {
+		this.sum_rain_1 = sum_rain_1;
 	}
 
 	public double getRain() {
 		return rain;
 	}
 
-	public void setWindAngle(final double windAngle) {
-		this.windAngle = windAngle;
+	public void setRain(final double rain) {
+		this.rain = rain;
 	}
 
 	public double getWindAngle() {
 		return windAngle;
 	}
 
-	public void setWindStrength(final double windStrength) {
-		this.windStrength = windStrength;
+	public void setWindAngle(final double windAngle) {
+		this.windAngle = windAngle;
 	}
 
 	public double getWindStrength() {
 		return windStrength;
 	}
 
-	public void setGustAngle(final double gustAngle) {
-		this.gustAngle = gustAngle;
+	public void setWindStrength(final double windStrength) {
+		this.windStrength = windStrength;
 	}
 
 	public double getGustAngle() {
 		return gustAngle;
 	}
 
-	public void setGustStrength(final double gustStrength) {
-		this.gustStrength = gustStrength;
+	public void setGustAngle(final double gustAngle) {
+		this.gustAngle = gustAngle;
 	}
 
 	public double getGustStrength() {
 		return gustStrength;
 	}
 
+	public void setGustStrength(final double gustStrength) {
+		this.gustStrength = gustStrength;
+	}
 }
