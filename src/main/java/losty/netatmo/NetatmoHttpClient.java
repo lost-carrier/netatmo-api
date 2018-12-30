@@ -15,6 +15,7 @@
  */
 package losty.netatmo;
 
+import losty.netatmo.model.Home;
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
 import losty.netatmo.model.Station;
@@ -45,6 +46,8 @@ public class NetatmoHttpClient {
     private final static String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
     private final static String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
     private final static String URL_GET_PUBLIC_DATA = URL_BASE + "/api/getpublicdata";
+    private final static String URL_GET_HOMESDATA = URL_BASE + "/api/homesdata";
+	private final static String URL_GET_HOMESTATUS = URL_BASE + "/api/homestatus";
 
 	private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
@@ -76,7 +79,7 @@ public class NetatmoHttpClient {
 				.setClientSecret(clientSecret)
 				.setUsername(email)
 				.setPassword(password)
-				.setScope("read_station")
+				.setScope("read_station read_thermostat")
 				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
@@ -100,7 +103,7 @@ public class NetatmoHttpClient {
 				.setRefreshToken(token.getRefreshToken())
 				.setUsername(email)
 				.setPassword(password)
-				.setScope("read_station")
+				.setScope("read_station read_thermostat")
 				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
@@ -306,5 +309,46 @@ public class NetatmoHttpClient {
         }
 
 		return sb.toString();
+	}
+
+	/**
+	 * Retrieve user's homes and their topology.
+	 * See <a href=
+	 * "https://dev.netatmo.com/en-US/resources/technical/reference/energy/homesdata">
+	 * dev.netatmo.com/en-US/resources/technical/reference/energy/homesdata</a>
+	 * for more information.
+	 *
+	 * @param token The token obtained by the login function.
+	 * @return The requested home data.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 */
+	public List<Home> getHomesdata(final OAuthJSONAccessTokenResponse token) throws OAuthSystemException, OAuthProblemException {
+
+		final String request = URL_GET_HOMESDATA;
+		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
+				.setAccessToken(token.getAccessToken())
+				.buildQueryMessage();
+		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+		return NetatmoUtils.parseHomesdata(new JSONObject(resourceResponse.getBody()));
+	}
+
+	public Home getHomestatus(final OAuthJSONAccessTokenResponse token, final Home home) throws OAuthSystemException, OAuthProblemException {
+		final List<String> params = new ArrayList<>();
+
+		if ( home != null) {
+			params.add("home_id=" + home.getId());
+		}
+
+		final String query = implode("&", params.toArray(new String[0]));
+		final String request = URL_GET_HOMESTATUS + "?" + query;
+		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).buildQueryMessage();
+		bearerClientRequest.addHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer "	+ token.getAccessToken());
+
+		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
+		Home result = NetatmoUtils.parseHomestatus(new JSONObject(resourceResponse.getBody()));
+		result.setName(home.getName());
+		return result;
 	}
 }
