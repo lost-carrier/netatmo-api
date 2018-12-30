@@ -333,6 +333,19 @@ public class NetatmoHttpClient {
 		return NetatmoUtils.parseHomesdata(new JSONObject(resourceResponse.getBody()));
 	}
 
+	/**
+	 * Get the current status and data measured for all home devices.
+	 * See <a href=
+	 * "https://dev.netatmo.com/en-US/resources/technical/reference/energy/homestatus">
+	 * dev.netatmo.com/en-US/resources/technical/reference/energy/homestatus</a>
+	 * for more information.
+	 *
+	 * @param token The token obtained by the login function.
+	 * @param home The home to query
+	 * @return The requested home status.
+	 * @throws OAuthSystemException When something goes wrong with OAuth.
+	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 */
 	public Home getHomestatus(final OAuthJSONAccessTokenResponse token, final Home home) throws OAuthSystemException, OAuthProblemException {
 		final List<String> params = new ArrayList<>();
 
