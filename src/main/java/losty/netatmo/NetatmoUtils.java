@@ -26,6 +26,8 @@ import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
 import losty.netatmo.model.Params;
 import losty.netatmo.model.Station;
+import losty.netatmo.model.Home;
+import losty.netatmo.model.Room;
 
 public class NetatmoUtils {
 
@@ -194,6 +196,84 @@ public class NetatmoUtils {
 
         return result;
     }
+
+    public static List<Home> parseHomesdata(final JSONObject response) throws JSONException {
+		final List<Home> result = new ArrayList<>();
+
+		if (response == null) {
+			return result;
+		}
+
+		final JSONArray jsonHomes = response.getJSONObject("body").getJSONArray("homes");
+
+		for (int i = 0; i < jsonHomes.length(); i++) {
+			final JSONObject homeJsonObject = jsonHomes.getJSONObject(i);
+			final String id = homeJsonObject.getString("id");
+			final String name = homeJsonObject.getString("name");
+
+			final Home home = new Home(id, name);
+			result.add(home);
+		}
+
+		return result;
+	}
+
+	public static Home parseHomestatus(final JSONObject response) throws JSONException {
+		Home home = new Home();
+
+		if (response == null) {
+			return home;
+		}
+
+		final JSONObject jsonHome = response.getJSONObject("body").getJSONObject("home");
+		final String home_id = jsonHome.getString("id");
+		home.setId(home_id);
+
+		final JSONArray jsonModules = jsonHome.getJSONArray("modules");
+		for (int i = 0; i < jsonModules.length(); i++) {
+			final JSONObject jsonModule = jsonModules.getJSONObject(i);
+			final String module_id = jsonModule.getString("id");
+			final String module_type = jsonModule.getString("type");
+
+			Module module = new Module();
+			module.setId(module_id);
+			module.setType(module_type);
+
+			if (module_type.equals(Module.TYPE_NA_THERM_1)) {
+				boolean boiler_status = jsonModule.getBoolean("boiler_status");
+				boolean reachable = jsonModule.getBoolean("reachable");
+				module.setBoilerStatus(boiler_status);
+				module.setReachable(reachable);
+			}
+
+			home.addModule(module);
+		}
+
+		final JSONArray jsonRooms = jsonHome.getJSONArray("rooms");
+		for (int i = 0; i < jsonRooms.length(); i++) {
+			final JSONObject jsonRoom = jsonRooms.getJSONObject(i);
+			final String room_id = jsonRoom.getString("id");
+			final boolean reachable = jsonRoom.getBoolean("reachable");
+			final float therm_measured_temperature = jsonRoom.getFloat("therm_measured_temperature");
+			final float therm_setpoint_temperature = jsonRoom.getFloat("therm_setpoint_temperature");
+			final String therm_setpoint_mode = jsonRoom.getString("therm_setpoint_mode");
+			final long therm_setpoint_start_time = jsonRoom.getLong("therm_setpoint_start_time");
+			final long therm_setpoint_end_time = jsonRoom.getLong("therm_setpoint_end_time");
+
+			Room room = new Room();
+			room.setId(room_id);
+			room.setReachable(reachable);
+			room.setTherm_measured_temperature(therm_measured_temperature);
+			room.setTherm_setpoint_temperature(therm_setpoint_temperature);
+			room.setTherm_setpoint_mode(therm_setpoint_mode);
+			room.setTherm_setpoint_start_time(therm_setpoint_start_time);
+			room.setTherm_setpoint_end_time(therm_setpoint_end_time);
+
+			home.addRoom(room);
+		}
+
+		return home;
+	}
 
     private static Map<String, Station> determineStations(Station station, List<Module> modules) {
 	    final Map<String, Station> ret = new HashMap<>();

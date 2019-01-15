@@ -1,9 +1,6 @@
 package losty.netatmo;
 
-import losty.netatmo.model.Measures;
-import losty.netatmo.model.Module;
-import losty.netatmo.model.Params;
-import losty.netatmo.model.Station;
+import losty.netatmo.model.*;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -161,4 +158,830 @@ public class NetatmoHttpClientTest {
         List<Measures> measures = client.getPublicData(token, 43.1, 8.5, 42.6, 4.4, null, false);
 
      */
+
+    @Test
+    public void getHomesdata() throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
+        OAuthResourceResponse response = mock(OAuthResourceResponse.class);
+        when(response.getBody()). thenReturn("{\n" +
+                "    \"body\": {\n" +
+                "        \"homes\": [\n" +
+                "            {\n" +
+                "                \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\",\n" +
+                "                \"name\": \"Thermostat\",\n" +
+                "                \"altitude\": 0,\n" +
+                "                \"coordinates\": [\n" +
+                "                    14.247799784851,\n" +
+                "                    40.829912554443\n" +
+                "                ],\n" +
+                "                \"country\": \"IT\",\n" +
+                "                \"timezone\": \"Europe/Rome\",\n" +
+                "                \"rooms\": [\n" +
+                "                    {\n" +
+                "                        \"id\": \"xxxxxxxxx\",\n" +
+                "                        \"name\": \"My room\",\n" +
+                "                        \"type\": \"custom\",\n" +
+                "                        \"module_ids\": [\n" +
+                "                            \"xx:xx:xx:xx:xx:xx\"\n" +
+                "                        ],\n" +
+                "                        \"measure_offset_NAPlug_temperature\": 0,\n" +
+                "                        \"measure_offset_NAPlug_estimated_temperature\": 0\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"modules\": [\n" +
+                "                    {\n" +
+                "                        \"id\": \"xx:xx:xx:xx:xx:xx\",\n" +
+                "                        \"type\": \"NAPlug\",\n" +
+                "                        \"name\": \"Thermostat\",\n" +
+                "                        \"setup_date\": 1479455690,\n" +
+                "                        \"modules_bridged\": [\n" +
+                "                            \"xx:xx:xx:xx:xx:xx\"\n" +
+                "                        ]\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"id\": \"xx:xx:xx:xx:xx:xx\",\n" +
+                "                        \"type\": \"NATherm1\",\n" +
+                "                        \"name\": \"Thermostat\",\n" +
+                "                        \"setup_date\": 1479455691,\n" +
+                "                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                        \"bridge\": \"xx:xx:xx:xx:xx:xx\"\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"therm_schedules\": [\n" +
+                "                    {\n" +
+                "                        \"zones\": [\n" +
+                "                            {\n" +
+                "                                \"type\": 0,\n" +
+                "                                \"id\": 0,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 22\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"type\": 1,\n" +
+                "                                \"id\": 1,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 20\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"type\": 5,\n" +
+                "                                \"id\": 4,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 16\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"timetable\": [\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 0,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 360,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 480,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1200,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1380,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1800,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1920,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 2640,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 2820,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 3240,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 3360,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4080,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4260,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4680,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4800,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 5520,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 5700,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 6120,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 6240,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 6960,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 7140,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 7560,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 8580,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 9000,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 10020,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"name\": \"Default\",\n" +
+                "                        \"hg_temp\": 7,\n" +
+                "                        \"away_temp\": 15,\n" +
+                "                        \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\",\n" +
+                "                        \"type\": \"therm\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"timetable\": [\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 420\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 540\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 960\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 1290\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 1860\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 1980\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 2400\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 2730\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 3300\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 3420\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 3840\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 4170\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 4740\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 4860\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 5280\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 5610\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 6180\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 6300\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 6720\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 7050\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 7620\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 7740\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 8160\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 8490\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 9060\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 9180\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 9600\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 9930\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"zones\": [\n" +
+                "                            {\n" +
+                "                                \"name\": \"Night\",\n" +
+                "                                \"id\": 1,\n" +
+                "                                \"type\": 1,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 18\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"name\": \"Economy\",\n" +
+                "                                \"id\": 4,\n" +
+                "                                \"type\": 5,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 16\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"name\": \"Comfort\",\n" +
+                "                                \"id\": 0,\n" +
+                "                                \"type\": 0,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 20\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"name\": \"Morning\",\n" +
+                "                                \"id\": 7044,\n" +
+                "                                \"type\": 4,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 19\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"name\": \"Scheduling \",\n" +
+                "                        \"default\": false,\n" +
+                "                        \"away_temp\": 12,\n" +
+                "                        \"hg_temp\": 7,\n" +
+                "                        \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\",\n" +
+                "                        \"selected\": true,\n" +
+                "                        \"type\": \"therm\"\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"therm_setpoint_default_duration\": 180,\n" +
+                "                \"schedules\": [\n" +
+                "                    {\n" +
+                "                        \"zones\": [\n" +
+                "                            {\n" +
+                "                                \"type\": 0,\n" +
+                "                                \"id\": 0,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 22\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 22\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"type\": 1,\n" +
+                "                                \"id\": 1,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 20\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 20\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"type\": 5,\n" +
+                "                                \"id\": 4,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 16\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 16\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"timetable\": [\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 0,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 360,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 480,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1200,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1380,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1800,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 1920,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 2640,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 2820,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 3240,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 3360,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4080,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4260,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4680,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 4800,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 5520,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 5700,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 6120,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 6240,\n" +
+                "                                \"zone_id\": 4\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 6960,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 7140,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 7560,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 8580,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 9000,\n" +
+                "                                \"zone_id\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"m_offset\": 10020,\n" +
+                "                                \"zone_id\": 1\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"name\": \"Default\",\n" +
+                "                        \"hg_temp\": 7,\n" +
+                "                        \"away_temp\": 15,\n" +
+                "                        \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\",\n" +
+                "                        \"type\": \"therm\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"timetable\": [\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 0\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 420\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 540\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 960\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 1290\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 1860\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 1980\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 2400\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 2730\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 3300\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 3420\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 3840\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 4170\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 4740\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 4860\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 5280\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 5610\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 6180\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 6300\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 6720\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 7050\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 7620\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 7740\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 8160\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 8490\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 9060\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 7044,\n" +
+                "                                \"m_offset\": 9180\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 0,\n" +
+                "                                \"m_offset\": 9600\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"zone_id\": 1,\n" +
+                "                                \"m_offset\": 9930\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"zones\": [\n" +
+                "                            {\n" +
+                "                                \"name\": \"Night\",\n" +
+                "                                \"id\": 1,\n" +
+                "                                \"type\": 1,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 18\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 18\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"name\": \"Economy\",\n" +
+                "                                \"id\": 4,\n" +
+                "                                \"type\": 5,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 16\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 16\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"name\": \"Comfort\",\n" +
+                "                                \"id\": 0,\n" +
+                "                                \"type\": 0,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 20\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 20\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"name\": \"Morning\",\n" +
+                "                                \"id\": 7044,\n" +
+                "                                \"type\": 4,\n" +
+                "                                \"rooms_temp\": [\n" +
+                "                                    {\n" +
+                "                                        \"room_id\": \"xxxxxxxxx\",\n" +
+                "                                        \"temp\": 19\n" +
+                "                                    }\n" +
+                "                                ],\n" +
+                "                                \"rooms\": [\n" +
+                "                                    {\n" +
+                "                                        \"id\": \"xxxxxxxxx\",\n" +
+                "                                        \"therm_setpoint_temperature\": 19\n" +
+                "                                    }\n" +
+                "                                ]\n" +
+                "                            }\n" +
+                "                        ],\n" +
+                "                        \"name\": \"Scheduling \",\n" +
+                "                        \"default\": false,\n" +
+                "                        \"away_temp\": 12,\n" +
+                "                        \"hg_temp\": 7,\n" +
+                "                        \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\",\n" +
+                "                        \"selected\": true,\n" +
+                "                        \"type\": \"therm\"\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"therm_mode\": \"schedule\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"user\": {\n" +
+                "            \"email\": \"user@email\",\n" +
+                "            \"language\": \"it-IT\",\n" +
+                "            \"locale\": \"it-IT\",\n" +
+                "            \"feel_like_algorithm\": 0,\n" +
+                "            \"unit_pressure\": 0,\n" +
+                "            \"unit_system\": 0,\n" +
+                "            \"unit_wind\": 0,\n" +
+                "            \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"status\": \"ok\",\n" +
+                "    \"time_exec\": 0.039823055267334,\n" +
+                "    \"time_server\": 1547448595\n" +
+                "}");
+        OAuthJSONAccessTokenResponse token = mock(OAuthJSONAccessTokenResponse.class);
+        OAuthClient oAuthClient = mock(OAuthClient.class);
+        when(oAuthClient.resource(any(OAuthClientRequest.class), eq(OAuth.HttpMethod.GET), eq(OAuthResourceResponse.class))).thenReturn(response);
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        FieldUtils.writeField(client, "oAuthClient", oAuthClient, true);
+
+        List<Home> homeList = client.getHomesdata(token);
+
+        assertEquals(1, homeList.size());
+        Home home = homeList.get(0);
+        assertEquals("xxxxxxxxxxxxxxxxxxxxxxxx", home.getId());
+        assertEquals("Thermostat", home.getName());
+    }
+
+    @Test
+    public void getHomestatus() throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
+        OAuthResourceResponse response = mock(OAuthResourceResponse.class);
+        when(response.getBody()). thenReturn("{\n" +
+                "    \"status\": \"ok\",\n" +
+                "    \"time_server\": 1547560610,\n" +
+                "    \"body\": {\n" +
+                "        \"home\": {\n" +
+                "            \"modules\": [\n" +
+                "                {\n" +
+                "                    \"id\": \"70:xx:xx:xx:xx:xx\",\n" +
+                "                    \"type\": \"NAPlug\",\n" +
+                "                    \"firmware_revision\": 174,\n" +
+                "                    \"rf_strength\": 104,\n" +
+                "                    \"wifi_strength\": 86\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"id\": \"04:xx:xx:xx:xx:xx\",\n" +
+                "                    \"reachable\": true,\n" +
+                "                    \"type\": \"NATherm1\",\n" +
+                "                    \"firmware_revision\": 65,\n" +
+                "                    \"rf_strength\": 70,\n" +
+                "                    \"battery_level\": 4400,\n" +
+                "                    \"boiler_valve_comfort_boost\": false,\n" +
+                "                    \"boiler_status\": false,\n" +
+                "                    \"anticipating\": false,\n" +
+                "                    \"bridge\": \"70:xx:xx:xx:xx:xx\",\n" +
+                "                    \"battery_state\": \"full\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"rooms\": [\n" +
+                "                {\n" +
+                "                    \"id\": \"xxxxxxxxx\",\n" +
+                "                    \"reachable\": true,\n" +
+                "                    \"therm_measured_temperature\": 19,\n" +
+                "                    \"therm_setpoint_temperature\": 19,\n" +
+                "                    \"therm_setpoint_mode\": \"schedule\",\n" +
+                "                    \"therm_setpoint_start_time\": 1547539200,\n" +
+                "                    \"therm_setpoint_end_time\": 0\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+        OAuthJSONAccessTokenResponse token = mock(OAuthJSONAccessTokenResponse.class);
+        OAuthClient oAuthClient = mock(OAuthClient.class);
+        when(oAuthClient.resource(any(OAuthClientRequest.class), eq(OAuth.HttpMethod.GET), eq(OAuthResourceResponse.class))).thenReturn(response);
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        FieldUtils.writeField(client, "oAuthClient", oAuthClient, true);
+
+        Home home = new Home();
+        home.setId("xxxxxxxxxxxxxxxxxxxxxxxx");
+        home.setName("Thermostat");
+        home = client.getHomestatus(token, home);
+
+        assertEquals(2, home.getModules().size());
+        assertEquals(1, home.getRooms().size());
+
+        Module naplug = home.getModules().get(0);
+        assertEquals("70:xx:xx:xx:xx:xx", naplug.getId());
+        assertEquals(Module.TYPE_NA_PLUG, naplug.getType());
+
+        Module natherm1 = home.getModules().get(1);
+        assertEquals("04:xx:xx:xx:xx:xx", natherm1.getId());
+        assertEquals(Module.TYPE_NA_THERM_1, natherm1.getType());
+        assertEquals(true, natherm1.isReachable());
+        assertEquals(false, natherm1.isBoilerStatus());
+    }
 }
