@@ -4,7 +4,7 @@
 
 	<groupId>org.losty.netatmo</groupId>
 	<artifactId>netatmo-api</artifactId>
-	<version>0.2.0</version>
+	<version>0.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
 	<name>Netatmo API (unofficial)</name>
