@@ -152,13 +152,6 @@ public class NetatmoHttpClientTest {
         assertEquals(0.0, s26.getValue().getSum_rain_24(),0.0);
     }
 
-    /*
-        NetatmoHttpClient client = new NetatmoHttpClient("55806e1f485a8870a18b45aa", "1FoOm3C2kwagxonkod50Ldq2lIipqm1jf");
-        OAuthJSONAccessTokenResponse token = client.login("netatmo@losty.ch", "connectnetatmo");
-        List<Measures> measures = client.getPublicData(token, 43.1, 8.5, 42.6, 4.4, null, false);
-
-     */
-
     @Test
     public void getHomesdata() throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
         OAuthResourceResponse response = mock(OAuthResourceResponse.class);
