@@ -1,6 +1,7 @@
 package losty.netatmo;
 
 import losty.netatmo.model.*;
+import losty.netatmo.model.Module;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
