@@ -111,14 +111,14 @@ public class NetatmoHttpClientTest {
         assertEquals(49, measures.size());
         Map.Entry<Station, Measures> s1m0 = measures.get(0);
         assertEquals("70:ee:50:17:eb:b6", s1m0.getKey().getId());
-        assertEquals("41,913026,8,727246", s1m0.getKey().getName());
+        assertEquals("41.913026,8.727246", s1m0.getKey().getName());
         assertEquals(0, s1m0.getKey().getModules().size());
         assertEquals(1528826084, s1m0.getValue().getBeginTime());
         assertEquals(1010.9, s1m0.getValue().getPressure(),0.0);
 
         Map.Entry<Station, Measures> s1m1 = measures.get(1);
         assertEquals("70:ee:50:17:eb:b6", s1m1.getKey().getId());
-        assertEquals("41,913026,8,727246", s1m1.getKey().getName());
+        assertEquals("41.913026,8.727246", s1m1.getKey().getName());
         assertEquals(1, s1m1.getKey().getModules().size());
         assertEquals("02:00:00:17:d0:b2", s1m1.getKey().getModules().get(0).getId());
         assertEquals(null, s1m1.getKey().getModules().get(0).getName());
@@ -129,7 +129,7 @@ public class NetatmoHttpClientTest {
 
         Map.Entry<Station, Measures> s24 = measures.get(24);
         assertEquals("70:ee:50:2d:00:76", s24.getKey().getId());
-        assertEquals("42,563921,8,758509", s24.getKey().getName());
+        assertEquals("42.563921,8.758509", s24.getKey().getName());
         assertEquals(1, s24.getKey().getModules().size());
         assertEquals("06:00:00:02:f0:46", s24.getKey().getModules().get(0).getId());
         assertEquals(null, s24.getKey().getModules().get(0).getName());
@@ -142,7 +142,7 @@ public class NetatmoHttpClientTest {
 
         Map.Entry<Station, Measures> s26 = measures.get(26);
         assertEquals("70:ee:50:2d:00:76", s26.getKey().getId());
-        assertEquals("42,563921,8,758509", s26.getKey().getName());
+        assertEquals("42.563921,8.758509", s26.getKey().getName());
         assertEquals(1, s26.getKey().getModules().size());
         assertEquals("05:00:00:03:ce:e8", s26.getKey().getModules().get(0).getId());
         assertEquals(null, s26.getKey().getModules().get(0).getName());

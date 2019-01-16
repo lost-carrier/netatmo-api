@@ -172,7 +172,7 @@ public class NetatmoUtils {
                 final Station stationForModule = stationsById.get(measuresModuleId);
                 Measures measures = null;
                 if (stationForModule == null) {
-                    throw new RuntimeException(String.format("Cannot find moduleId=%s", measuresModuleId));
+                    throw new RuntimeException(format("Cannot find moduleId=%s", measuresModuleId));
                 } else if (stationForModule.getModules().size() == 0) {
                     measures = parseMeasuresMethod1(measuresThisModule);
                 } else switch (stationForModule.getModules().get(0).getType()) {
@@ -362,7 +362,11 @@ public class NetatmoUtils {
         final JSONObject place = data.getJSONObject("place");
         final JSONArray location = place.getJSONArray("location");
 //        final String name = String.format("%f,%f,%f", location.getDouble(1), location.getDouble(0), place.getDouble("altitude"));
-        final String name = String.format("%f,%f", location.getDouble(1), location.getDouble(0));
+        final String name = format("%f,%f", location.getDouble(1), location.getDouble(0));
         return new Station(name, id);
     }
+
+    public static String format(String string, Object... params) {
+		return String.format(Locale.US, string, params);
+	}
 }
