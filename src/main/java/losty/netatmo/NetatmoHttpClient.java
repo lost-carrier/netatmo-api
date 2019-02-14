@@ -96,14 +96,12 @@ public class NetatmoHttpClient {
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public OAuthJSONAccessTokenResponse refreshToken(final OAuthJSONAccessTokenResponse token, final String email, final String password) throws OAuthSystemException, OAuthProblemException {
+	public OAuthJSONAccessTokenResponse refreshToken(final OAuthJSONAccessTokenResponse token) throws OAuthSystemException, OAuthProblemException {
 		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
-				.setGrantType(GrantType.PASSWORD)
+				.setGrantType(GrantType.REFRESH_TOKEN)
 				.setClientId(clientId)
 				.setClientSecret(clientSecret)
 				.setRefreshToken(token.getRefreshToken())
-				.setUsername(email)
-				.setPassword(password)
 				.setScope("read_station read_thermostat")
 				.buildBodyMessage();
 
