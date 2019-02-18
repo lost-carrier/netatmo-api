@@ -49,6 +49,8 @@ public class NetatmoHttpClient {
     private final static String URL_GET_HOMESDATA = URL_BASE + "/api/homesdata";
 	private final static String URL_GET_HOMESTATUS = URL_BASE + "/api/homestatus";
 
+	private final static String SCOPE = "read_station read_thermostat";
+
 	private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
 	private String clientId;
@@ -79,7 +81,7 @@ public class NetatmoHttpClient {
 				.setClientSecret(clientSecret)
 				.setUsername(email)
 				.setPassword(password)
-				.setScope("read_station read_thermostat")
+				.setScope(SCOPE)
 				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
@@ -100,7 +102,7 @@ public class NetatmoHttpClient {
 				.setClientId(clientId)
 				.setClientSecret(clientSecret)
 				.setRefreshToken(token.getRefreshToken())
-				.setScope("read_station read_thermostat")
+				.setScope(SCOPE)
 				.buildBodyMessage();
 
 		return oAuthClient.accessToken(request);
