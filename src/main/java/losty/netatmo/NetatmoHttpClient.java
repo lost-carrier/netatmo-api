@@ -90,8 +90,6 @@ public class NetatmoHttpClient {
 	 * refresh token and the user's credentials.
 	 *
 	 * @param token The token obtained by the login function.
-	 * @param email E-Mail
-	 * @param password Password
 	 * @return The refreshed Access Token.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
