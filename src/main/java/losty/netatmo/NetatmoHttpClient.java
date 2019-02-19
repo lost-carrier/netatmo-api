@@ -55,6 +55,7 @@ public class NetatmoHttpClient {
 
 	private String clientId;
 	private String clientSecret;
+	private OAuthJSONAccessTokenResponse token;
 
 	public NetatmoHttpClient(final String clientId, final String clientSecret) {
 		this.clientId = clientId;
@@ -68,11 +69,10 @@ public class NetatmoHttpClient {
 	 * 
 	 * @param email E-Mail
 	 * @param password Password
-	 * @return The Access Token.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public OAuthJSONAccessTokenResponse login(final String email, final String password)
+	public void login(final String email, final String password)
 			throws OAuthSystemException, OAuthProblemException {
 
 		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
@@ -84,19 +84,18 @@ public class NetatmoHttpClient {
 				.setScope(SCOPE)
 				.buildBodyMessage();
 
-		return oAuthClient.accessToken(request);
+		token = oAuthClient.accessToken(request);
 	}
 
 	/**
 	 * Retrieve an refreshed or renewed access token, using your
 	 * refresh token and the user's credentials.
 	 *
-	 * @param token The token obtained by the login function.
-	 * @return The refreshed Access Token.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public OAuthJSONAccessTokenResponse refreshToken(final OAuthJSONAccessTokenResponse token) throws OAuthSystemException, OAuthProblemException {
+	public void refreshToken()
+			throws OAuthSystemException, OAuthProblemException {
 		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
 				.setGrantType(GrantType.REFRESH_TOKEN)
 				.setClientId(clientId)
@@ -105,7 +104,7 @@ public class NetatmoHttpClient {
 				.setScope(SCOPE)
 				.buildBodyMessage();
 
-		return oAuthClient.accessToken(request);
+		token = oAuthClient.accessToken(request);
 	}
 
 	/**
@@ -117,7 +116,6 @@ public class NetatmoHttpClient {
 	 * dev.netatmo.com/en-US/resources/technical/reference/weatherstation/getstationsdata</a>
 	 * for more information.
 	 * 
-	 * @param token The token obtained by the login function.
      * @param station The station to query (optional)
      * @param getFavorites Whether to fetch favorites, too (optional)
 	 * @return The found Stations.
@@ -125,7 +123,7 @@ public class NetatmoHttpClient {
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 * @throws JSONException If paring goes wrong.
 	 */
-	public List<Station> getStationsData(final OAuthJSONAccessTokenResponse token, final Station station, final Boolean getFavorites)
+	public List<Station> getStationsData(final Station station, final Boolean getFavorites)
 			throws OAuthSystemException, OAuthProblemException, JSONException {
 
 		final List<String> params = new ArrayList<>();
@@ -156,7 +154,6 @@ public class NetatmoHttpClient {
 	 * 
 	 * Some parameters are optional, they can be set to "null".
 	 * 
-	 * @param token The token obtained by the login function.
 	 * @param station The station to query
 	 * @param module The module of the station (optional)
 	 * @param types A list of the types to query
@@ -169,7 +166,7 @@ public class NetatmoHttpClient {
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
+	public List<Measures> getMeasures(final Station station, final Module module,
 			final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
 					throws OAuthSystemException, OAuthProblemException {
 
@@ -183,7 +180,7 @@ public class NetatmoHttpClient {
 			dateEndMillis = (dateEnd.getTime() / 1000);
 		}
 
-		return getMeasures(token, station, module, types, scale, dateBeginMillis, dateEndMillis, limit, realTime);
+		return getMeasures(station, module, types, scale, dateBeginMillis, dateEndMillis, limit, realTime);
 	}
 
 	/**
@@ -194,7 +191,6 @@ public class NetatmoHttpClient {
 	 * 
 	 * Some parameters are optional, they can be set to "null".
 	 * 
-	 * @param token The token obtained by the login function.
 	 * @param station The station to query
 	 * @param module The module of the station (optional)
 	 * @param types A list of the types to query
@@ -207,7 +203,7 @@ public class NetatmoHttpClient {
      * @throws OAuthSystemException When something goes wrong with OAuth.
      * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public List<Measures> getMeasures(final OAuthJSONAccessTokenResponse token, final Station station, final Module module,
+	public List<Measures> getMeasures(final Station station, final Module module,
 			final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
 					throws OAuthSystemException, OAuthProblemException {
 
@@ -258,7 +254,6 @@ public class NetatmoHttpClient {
      * dev.netatmo.com/en-US/resources/technical/reference/weatherapi/getpublicdata</a>
      * for more information.
      *
-     * @param token The token obtained by the login function.
      * @param lat_ne Latitude of the north east corner of the requested area. -85.0 to +85.0 and (with lat_ne greater than lat_sw)
      * @param lon_ne Longitude of the north east corner of the requested area. -180.0 to +180.0 (with lon_ne greater than lon_sw)
      * @param lat_sw Latitude of the south west corner of the requested area. -85.0 to +85.0
@@ -269,9 +264,8 @@ public class NetatmoHttpClient {
      * @throws OAuthSystemException When something goes wrong with OAuth.
      * @throws OAuthProblemException When something goes wrong with OAuth.
      */
-    public List<Map.Entry<Station, Measures>> getPublicData(final OAuthJSONAccessTokenResponse token,
-                                                             double lat_ne, double lon_ne, double lat_sw, double lon_sw,
-                                                             final List<String> types, final Boolean filter)
+    public List<Map.Entry<Station, Measures>> getPublicData(double lat_ne, double lon_ne, double lat_sw, double lon_sw,
+															final List<String> types, final Boolean filter)
             throws OAuthSystemException, OAuthProblemException {
 
         final List<String> params = new ArrayList<>();
@@ -317,12 +311,11 @@ public class NetatmoHttpClient {
 	 * dev.netatmo.com/en-US/resources/technical/reference/energy/homesdata</a>
 	 * for more information.
 	 *
-	 * @param token The token obtained by the login function.
 	 * @return The requested home data.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public List<Home> getHomesdata(final OAuthJSONAccessTokenResponse token) throws OAuthSystemException, OAuthProblemException {
+	public List<Home> getHomesdata() throws OAuthSystemException, OAuthProblemException {
 
 		final String request = URL_GET_HOMESDATA;
 		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
@@ -339,13 +332,12 @@ public class NetatmoHttpClient {
 	 * dev.netatmo.com/en-US/resources/technical/reference/energy/homestatus</a>
 	 * for more information.
 	 *
-	 * @param token The token obtained by the login function.
 	 * @param home The home to query
 	 * @return The requested home status.
 	 * @throws OAuthSystemException When something goes wrong with OAuth.
 	 * @throws OAuthProblemException When something goes wrong with OAuth.
 	 */
-	public Home getHomestatus(final OAuthJSONAccessTokenResponse token, final Home home) throws OAuthSystemException, OAuthProblemException {
+	public Home getHomestatus(final Home home) throws OAuthSystemException, OAuthProblemException {
 		final List<String> params = new ArrayList<>();
 
 		if ( home != null) {
