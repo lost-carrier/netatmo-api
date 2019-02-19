@@ -6,7 +6,6 @@
 	<artifactId>netatmo-api</artifactId>
 	<packaging>jar</packaging>
 	<version>0.4.0</version>
-	<packaging>jar</packaging>
 
 	<name>Netatmo API (unofficial)</name>
 	<description>Small adaption of the original Netatmo Android API that can be used with plain Java (>=v7) instead of Android.</description>
@@ -53,11 +52,6 @@
 			<groupId>org.apache.oltu.oauth2</groupId>
 			<artifactId>org.apache.oltu.oauth2.client</artifactId>
 			<version>1.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.25</version>
 		</dependency>
 
 		<!-- Test -->
