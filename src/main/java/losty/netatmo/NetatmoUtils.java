@@ -31,126 +31,126 @@ import losty.netatmo.model.Room;
 
 public class NetatmoUtils {
 
-	public static List<Station> parseStationsData(final JSONObject response) throws JSONException {
-		final List<Station> result = new ArrayList<Station>();
+    public static List<Station> parseStationsData(final JSONObject response) throws JSONException {
+        final List<Station> result = new ArrayList<Station>();
 
-		if (response == null) {
-			return result;
-		}
+        if (response == null) {
+            return result;
+        }
 
-		final JSONArray JSONstations = response.getJSONObject("body").getJSONArray("devices");
+        final JSONArray JSONstations = response.getJSONObject("body").getJSONArray("devices");
 
-		for (int i = 0; i < JSONstations.length(); i++) {
-			final JSONObject station = JSONstations.getJSONObject(i);
-			final String stationId = station.getString("_id");
-			final String stationName = station.getString("station_name");
-			final String stationModuleName = station.optString("module_name", stationId);
+        for (int i = 0; i < JSONstations.length(); i++) {
+            final JSONObject station = JSONstations.getJSONObject(i);
+            final String stationId = station.getString("_id");
+            final String stationName = station.getString("station_name");
+            final String stationModuleName = station.optString("module_name", stationId);
 
-			final Station newStation = new Station(stationName, stationId);
-			final Module newStationModule = new Module(stationModuleName, stationId, Module.TYPE_INDOOR);
+            final Station newStation = new Station(stationName, stationId);
+            final Module newStationModule = new Module(stationModuleName, stationId, Module.TYPE_INDOOR);
 
-			newStation.addModule(newStationModule);
-			
-			
-			JSONArray JSONmodules = station.getJSONArray("modules");
+            newStation.addModule(newStationModule);
 
-			for (int j = 0; j < JSONmodules.length(); j++) {
-				final JSONObject module = JSONmodules.getJSONObject(j);
-				final String moduleId = module.getString("_id");
-				final String moduleName = module.optString("module_name", moduleId);
-				final String moduleType = module.getString("type");
 
-				final Module newModule = new Module(moduleName, moduleId, moduleType);
-				newStation.addModule(newModule);
-			}
-			
-			result.add(newStation);
-		}
+            JSONArray JSONmodules = station.getJSONArray("modules");
 
-		return result;
-	}
+            for (int j = 0; j < JSONmodules.length(); j++) {
+                final JSONObject module = JSONmodules.getJSONObject(j);
+                final String moduleId = module.getString("_id");
+                final String moduleName = module.optString("module_name", moduleId);
+                final String moduleType = module.getString("type");
 
-	public static List<Measures> parseMeasures(final JSONObject response, final String[] types) throws JSONException {
-		final List<Measures> result = new ArrayList<>();
+                final Module newModule = new Module(moduleName, moduleId, moduleType);
+                newStation.addModule(newModule);
+            }
 
-		if (response == null) {
-			return result;
-		}
-		
-		final JSONArray body = response.getJSONArray("body");
-		for (int i = 0; i < body.length(); i++) {
-			final JSONObject data = body.getJSONObject(i);
-			
-			final Long beginTime = data.getLong("beg_time");
-			final Long stepTime = data.optLong("step_time", 0);
-			final JSONArray values = data.getJSONArray("value");
-			
-			for (int j = 0; j < values.length(); j++) {
-				final JSONArray myValues = values.getJSONArray(j);
-				long myBeginTime = (beginTime + j * stepTime) * 1000;
-				final Measures measures = new Measures();
-				measures.setBeginTime(myBeginTime);
-				
-				for (int k = 0; k < types.length; k++) {
-					if (myValues.isNull(k)) {
-						continue;
-					}
+            result.add(newStation);
+        }
 
-					switch (types[k]) {
-					case Params.TYPE_TEMPERATURE:
-						measures.setTemperature(myValues.getDouble(k));
-						break;
-					case Params.TYPE_CO2:
-						measures.setCO2(myValues.getDouble(k));
-						break;
-					case Params.TYPE_HUMIDITY:
-						measures.setHumidity(myValues.getDouble(k));
-						break;
-					case Params.TYPE_PRESSURE:
-						measures.setPressure(myValues.getDouble(k));
-						break;
-					case Params.TYPE_NOISE:
-						measures.setNoise(myValues.getDouble(k));
-						break;
-					case Params.TYPE_MIN_TEMP:
-						measures.setMinTemp(myValues.getDouble(k));
-						break;
-					case Params.TYPE_MAX_TEMP:
-						measures.setMaxTemp(myValues.getDouble(k));
-						break;
-					case Params.TYPE_RAIN:
-						measures.setRain(myValues.getDouble(k));
-						break;
-					case Params.TYPE_RAIN_SUM_1:
-						measures.setSum_rain_1(myValues.getDouble(k));
-						break;
-					case Params.TYPE_RAIN_SUM_24:
-						measures.setSum_rain_24(myValues.getDouble(k));
-						break;
-					case Params.TYPE_WIND_ANGLE:
-						measures.setWindAngle(myValues.getDouble(k));
-						break;
-					case Params.TYPE_WIND_STRENGTH:
-						measures.setWindStrength(myValues.getDouble(k));
-						break;
-					case Params.TYPE_GUST_ANGLE:
-						measures.setGustAngle(myValues.getDouble(k));
-						break;
-					case Params.TYPE_GUST_STRENGTH:
-						measures.setGustStrength(myValues.getDouble(k));
-						break;
-					default:
-						//
-					}
-				}
-				result.add(measures);
-			}
-		}
+        return result;
+    }
 
-		return result;
-	}
+    public static List<Measures> parseMeasures(final JSONObject response, final String[] types) throws JSONException {
+        final List<Measures> result = new ArrayList<>();
 
-	public static List<Map.Entry<Station, Measures>> parsePublicData(final JSONObject response) throws JSONException {
+        if (response == null) {
+            return result;
+        }
+
+        final JSONArray body = response.getJSONArray("body");
+        for (int i = 0; i < body.length(); i++) {
+            final JSONObject data = body.getJSONObject(i);
+
+            final Long beginTime = data.getLong("beg_time");
+            final Long stepTime = data.optLong("step_time", 0);
+            final JSONArray values = data.getJSONArray("value");
+
+            for (int j = 0; j < values.length(); j++) {
+                final JSONArray myValues = values.getJSONArray(j);
+                long myBeginTime = (beginTime + j * stepTime) * 1000;
+                final Measures measures = new Measures();
+                measures.setBeginTime(myBeginTime);
+
+                for (int k = 0; k < types.length; k++) {
+                    if (myValues.isNull(k)) {
+                        continue;
+                    }
+
+                    switch (types[k]) {
+                        case Params.TYPE_TEMPERATURE:
+                            measures.setTemperature(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_CO2:
+                            measures.setCO2(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_HUMIDITY:
+                            measures.setHumidity(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_PRESSURE:
+                            measures.setPressure(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_NOISE:
+                            measures.setNoise(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_MIN_TEMP:
+                            measures.setMinTemp(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_MAX_TEMP:
+                            measures.setMaxTemp(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_RAIN:
+                            measures.setRain(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_RAIN_SUM_1:
+                            measures.setSum_rain_1(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_RAIN_SUM_24:
+                            measures.setSum_rain_24(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_WIND_ANGLE:
+                            measures.setWindAngle(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_WIND_STRENGTH:
+                            measures.setWindStrength(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_GUST_ANGLE:
+                            measures.setGustAngle(myValues.getDouble(k));
+                            break;
+                        case Params.TYPE_GUST_STRENGTH:
+                            measures.setGustStrength(myValues.getDouble(k));
+                            break;
+                        default:
+                            //
+                    }
+                }
+                result.add(measures);
+            }
+        }
+
+        return result;
+    }
+
+    public static List<Map.Entry<Station, Measures>> parsePublicData(final JSONObject response) throws JSONException {
         final List<Map.Entry<Station, Measures>> result = new ArrayList<>();
 
         if (response == null) {
@@ -198,88 +198,88 @@ public class NetatmoUtils {
     }
 
     public static List<Home> parseHomesdata(final JSONObject response) throws JSONException {
-		final List<Home> result = new ArrayList<>();
+        final List<Home> result = new ArrayList<>();
 
-		if (response == null) {
-			return result;
-		}
+        if (response == null) {
+            return result;
+        }
 
-		final JSONArray jsonHomes = response.getJSONObject("body").getJSONArray("homes");
+        final JSONArray jsonHomes = response.getJSONObject("body").getJSONArray("homes");
 
-		for (int i = 0; i < jsonHomes.length(); i++) {
-			final JSONObject homeJsonObject = jsonHomes.getJSONObject(i);
-			final String id = homeJsonObject.getString("id");
-			final String name = homeJsonObject.getString("name");
+        for (int i = 0; i < jsonHomes.length(); i++) {
+            final JSONObject homeJsonObject = jsonHomes.getJSONObject(i);
+            final String id = homeJsonObject.getString("id");
+            final String name = homeJsonObject.getString("name");
 
-			final Home home = new Home(id, name);
-			result.add(home);
-		}
+            final Home home = new Home(id, name);
+            result.add(home);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public static Home parseHomestatus(final JSONObject response) throws JSONException {
-		Home home = new Home();
+    public static Home parseHomestatus(final JSONObject response) throws JSONException {
+        Home home = new Home();
 
-		if (response == null) {
-			return home;
-		}
+        if (response == null) {
+            return home;
+        }
 
-		final JSONObject jsonHome = response.getJSONObject("body").getJSONObject("home");
-		final String home_id = jsonHome.getString("id");
-		home.setId(home_id);
+        final JSONObject jsonHome = response.getJSONObject("body").getJSONObject("home");
+        final String home_id = jsonHome.getString("id");
+        home.setId(home_id);
 
-		final JSONArray jsonModules = jsonHome.getJSONArray("modules");
-		for (int i = 0; i < jsonModules.length(); i++) {
-			final JSONObject jsonModule = jsonModules.getJSONObject(i);
-			final String module_id = jsonModule.getString("id");
-			final String module_type = jsonModule.getString("type");
+        final JSONArray jsonModules = jsonHome.getJSONArray("modules");
+        for (int i = 0; i < jsonModules.length(); i++) {
+            final JSONObject jsonModule = jsonModules.getJSONObject(i);
+            final String module_id = jsonModule.getString("id");
+            final String module_type = jsonModule.getString("type");
 
-			Module module = new Module();
-			module.setId(module_id);
-			module.setType(module_type);
+            Module module = new Module();
+            module.setId(module_id);
+            module.setType(module_type);
 
-			if (module_type.equals(Module.TYPE_NA_THERM_1)) {
-				boolean boiler_status = jsonModule.getBoolean("boiler_status");
-				boolean reachable = jsonModule.getBoolean("reachable");
-				module.setBoilerStatus(boiler_status);
-				module.setReachable(reachable);
-			}
+            if (module_type.equals(Module.TYPE_NA_THERM_1)) {
+                boolean boiler_status = jsonModule.getBoolean("boiler_status");
+                boolean reachable = jsonModule.getBoolean("reachable");
+                module.setBoilerStatus(boiler_status);
+                module.setReachable(reachable);
+            }
 
-			home.addModule(module);
-		}
+            home.addModule(module);
+        }
 
-		final JSONArray jsonRooms = jsonHome.getJSONArray("rooms");
-		for (int i = 0; i < jsonRooms.length(); i++) {
-			final JSONObject jsonRoom = jsonRooms.getJSONObject(i);
-			final String room_id = jsonRoom.getString("id");
-			final boolean reachable = jsonRoom.getBoolean("reachable");
-			final float therm_measured_temperature = jsonRoom.getFloat("therm_measured_temperature");
-			final float therm_setpoint_temperature = jsonRoom.getFloat("therm_setpoint_temperature");
-			final String therm_setpoint_mode = jsonRoom.getString("therm_setpoint_mode");
-			final long therm_setpoint_start_time = jsonRoom.getLong("therm_setpoint_start_time");
-			final long therm_setpoint_end_time = jsonRoom.getLong("therm_setpoint_end_time");
+        final JSONArray jsonRooms = jsonHome.getJSONArray("rooms");
+        for (int i = 0; i < jsonRooms.length(); i++) {
+            final JSONObject jsonRoom = jsonRooms.getJSONObject(i);
+            final String room_id = jsonRoom.getString("id");
+            final boolean reachable = jsonRoom.getBoolean("reachable");
+            final float therm_measured_temperature = jsonRoom.getFloat("therm_measured_temperature");
+            final float therm_setpoint_temperature = jsonRoom.getFloat("therm_setpoint_temperature");
+            final String therm_setpoint_mode = jsonRoom.getString("therm_setpoint_mode");
+            final long therm_setpoint_start_time = jsonRoom.getLong("therm_setpoint_start_time");
+            final long therm_setpoint_end_time = jsonRoom.getLong("therm_setpoint_end_time");
 
-			Room room = new Room();
-			room.setId(room_id);
-			room.setReachable(reachable);
-			room.setTherm_measured_temperature(therm_measured_temperature);
-			room.setTherm_setpoint_temperature(therm_setpoint_temperature);
-			room.setTherm_setpoint_mode(therm_setpoint_mode);
-			room.setTherm_setpoint_start_time(therm_setpoint_start_time);
-			room.setTherm_setpoint_end_time(therm_setpoint_end_time);
+            Room room = new Room();
+            room.setId(room_id);
+            room.setReachable(reachable);
+            room.setTherm_measured_temperature(therm_measured_temperature);
+            room.setTherm_setpoint_temperature(therm_setpoint_temperature);
+            room.setTherm_setpoint_mode(therm_setpoint_mode);
+            room.setTherm_setpoint_start_time(therm_setpoint_start_time);
+            room.setTherm_setpoint_end_time(therm_setpoint_end_time);
 
-			home.addRoom(room);
-		}
+            home.addRoom(room);
+        }
 
-		return home;
-	}
+        return home;
+    }
 
     private static Map<String, Station> determineStations(Station station, List<Module> modules) {
-	    final Map<String, Station> ret = new HashMap<>();
-	    ret.put(station.getId(), station);
-	    for (Module module : modules) {
-	        final Station stationForModule = new Station(station);
+        final Map<String, Station> ret = new HashMap<>();
+        ret.put(station.getId(), station);
+        for (Module module : modules) {
+            final Station stationForModule = new Station(station);
             stationForModule.setModules(Collections.singletonList(module));
             ret.put(module.getId(), stationForModule);
         }
@@ -313,9 +313,9 @@ public class NetatmoUtils {
     }
 
     private static Measures parseMeasuresMethod2(JSONObject measuresThisModule) {
-	    Measures ret = new Measures();
-	    for (String key : measuresThisModule.keySet()) {
-	        switch (key) {
+        Measures ret = new Measures();
+        for (String key : measuresThisModule.keySet()) {
+            switch (key) {
                 case "rain_60min":
                     ret.setSum_rain_1(measuresThisModule.getDouble(key));
                     break;
@@ -347,13 +347,13 @@ public class NetatmoUtils {
     }
 
     private static List<Module> parseModules(JSONObject modules) {
-	    List<Module> ret = new ArrayList<>();
-	    for (String moduleId : modules.keySet()) {
-	        String moduleType = modules.getString(moduleId);
-	        Module module = new Module(null, moduleId, moduleType);
-	        ret.add(module);
+        List<Module> ret = new ArrayList<>();
+        for (String moduleId : modules.keySet()) {
+            String moduleType = modules.getString(moduleId);
+            Module module = new Module(null, moduleId, moduleType);
+            ret.add(module);
         }
-        
+
         return ret;
     }
 
@@ -367,6 +367,6 @@ public class NetatmoUtils {
     }
 
     public static String format(String string, Object... params) {
-		return String.format(Locale.US, string, params);
-	}
+        return String.format(Locale.US, string, params);
+    }
 }
