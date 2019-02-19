@@ -15,6 +15,7 @@
  */
 package losty.netatmo;
 
+import losty.netatmo.exceptions.NetatmoNotLoggedInException;
 import losty.netatmo.exceptions.NetatmoOAuthException;
 import losty.netatmo.exceptions.NetatmoParseException;
 import losty.netatmo.model.Home;
@@ -95,9 +96,12 @@ public class NetatmoHttpClient {
 	 * Retrieve an refreshed or renewed access token, using your
 	 * refresh token and the user's credentials.
 	 *
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 */
-	public void refreshToken() throws NetatmoOAuthException {
+	public void refreshToken() throws NetatmoNotLoggedInException, NetatmoOAuthException {
+
+		verifyLoggedIn();
 
 		try {
 			OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
@@ -126,10 +130,14 @@ public class NetatmoHttpClient {
      * @param station The station to query (optional)
      * @param getFavorites Whether to fetch favorites, too (optional)
 	 * @return The found Stations.
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
-	public List<Station> getStationsData(final Station station, final Boolean getFavorites) throws NetatmoOAuthException, NetatmoParseException {
+	public List<Station> getStationsData(final Station station, final Boolean getFavorites)
+			throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+		verifyLoggedIn();
 
 		final List<String> params = new ArrayList<>();
 
@@ -174,12 +182,15 @@ public class NetatmoHttpClient {
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
 	 * @return The requested Measures from Netatmo.
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
 	public List<Measures> getMeasures(final Station station, final Module module,
 			final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
-			throws NetatmoOAuthException, NetatmoParseException {
+			throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+		verifyLoggedIn();
 
 		Long dateBeginMillis = null;
 		if (dateBegin != null) {
@@ -211,12 +222,15 @@ public class NetatmoHttpClient {
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
      * @return The requested Measures from Netatmo.
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
 	public List<Measures> getMeasures(final Station station, final Module module,
 			final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
-			throws NetatmoOAuthException, NetatmoParseException {
+			throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+		verifyLoggedIn();
 
 		final String[] typesArr;
 		if (types != null) {
@@ -279,12 +293,15 @@ public class NetatmoHttpClient {
      * @param types To filter stations based on relevant measurements you want (e.g. rain will only return stations with rain gauges). Default is no filter. You can find all measurements available on the Thermostat page.
      * @param filter True to exclude station with abnormal temperature measures. Default is false.
      * @return The requested weather data.
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 * @throws NetatmoParseException If parsing goes wrong.
      */
     public List<Map.Entry<Station, Measures>> getPublicData(double lat_ne, double lon_ne, double lat_sw, double lon_sw,
 															final List<String> types, final Boolean filter)
-			throws NetatmoOAuthException, NetatmoParseException {
+			throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+		verifyLoggedIn();
 
         final List<String> params = new ArrayList<>();
         params.add("lat_ne=" + lat_ne);
@@ -337,10 +354,13 @@ public class NetatmoHttpClient {
 	 * for more information.
 	 *
 	 * @return The requested home data.
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
-	public List<Home> getHomesdata() throws NetatmoOAuthException, NetatmoParseException {
+	public List<Home> getHomesdata() throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+		verifyLoggedIn();
 
 		final String request = URL_GET_HOMESDATA;
 
@@ -357,6 +377,12 @@ public class NetatmoHttpClient {
 		}
 	}
 
+	private void verifyLoggedIn() throws NetatmoNotLoggedInException {
+		 if (token == null) {
+		 	throw new NetatmoNotLoggedInException("Please use login() first!");
+		 }
+	}
+
 	/**
 	 * Get the current status and data measured for all home devices.
 	 * See <a href=
@@ -366,10 +392,14 @@ public class NetatmoHttpClient {
 	 *
 	 * @param home The home to query
 	 * @return The requested home status.
+	 * @throws NetatmoNotLoggedInException If not logged in.
 	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
-	public Home getHomestatus(final Home home) throws NetatmoOAuthException, NetatmoParseException {
+	public Home getHomestatus(final Home home) throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+		verifyLoggedIn();
+
 		final List<String> params = new ArrayList<>();
 
 		if ( home != null) {
