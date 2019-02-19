@@ -15,6 +15,8 @@
  */
 package losty.netatmo;
 
+import losty.netatmo.exceptions.NetatmoOAuthException;
+import losty.netatmo.exceptions.NetatmoParseException;
 import losty.netatmo.model.Home;
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
@@ -69,43 +71,47 @@ public class NetatmoHttpClient {
 	 * 
 	 * @param email E-Mail
 	 * @param password Password
-	 * @throws OAuthSystemException When something goes wrong with OAuth.
-	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 */
-	public void login(final String email, final String password)
-			throws OAuthSystemException, OAuthProblemException {
+	public void login(final String email, final String password) throws NetatmoOAuthException {
 
-		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
-				.setGrantType(GrantType.PASSWORD)
-				.setClientId(clientId)
-				.setClientSecret(clientSecret)
-				.setUsername(email)
-				.setPassword(password)
-				.setScope(SCOPE)
-				.buildBodyMessage();
+		try {
+			OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
+					.setGrantType(GrantType.PASSWORD)
+					.setClientId(clientId)
+					.setClientSecret(clientSecret)
+					.setUsername(email)
+					.setPassword(password)
+					.setScope(SCOPE)
+					.buildBodyMessage();
 
-		token = oAuthClient.accessToken(request);
+			token = oAuthClient.accessToken(request);
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		}
 	}
 
 	/**
 	 * Retrieve an refreshed or renewed access token, using your
 	 * refresh token and the user's credentials.
 	 *
-	 * @throws OAuthSystemException When something goes wrong with OAuth.
-	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
 	 */
-	public void refreshToken()
-			throws OAuthSystemException, OAuthProblemException {
+	public void refreshToken() throws NetatmoOAuthException {
 
-		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
-				.setGrantType(GrantType.REFRESH_TOKEN)
-				.setClientId(clientId)
-				.setClientSecret(clientSecret)
-				.setRefreshToken(token.getRefreshToken())
-				.setScope(SCOPE)
-				.buildBodyMessage();
+		try {
+			OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
+					.setGrantType(GrantType.REFRESH_TOKEN)
+					.setClientId(clientId)
+					.setClientSecret(clientSecret)
+					.setRefreshToken(token.getRefreshToken())
+					.setScope(SCOPE)
+					.buildBodyMessage();
 
-		token = oAuthClient.accessToken(request);
+			token = oAuthClient.accessToken(request);
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		}
 	}
 
 	/**
@@ -120,12 +126,10 @@ public class NetatmoHttpClient {
      * @param station The station to query (optional)
      * @param getFavorites Whether to fetch favorites, too (optional)
 	 * @return The found Stations.
-	 * @throws OAuthSystemException When something goes wrong with OAuth.
-	 * @throws OAuthProblemException When something goes wrong with OAuth.
-	 * @throws JSONException If paring goes wrong.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
+	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
-	public List<Station> getStationsData(final Station station, final Boolean getFavorites)
-			throws OAuthSystemException, OAuthProblemException, JSONException {
+	public List<Station> getStationsData(final Station station, final Boolean getFavorites) throws NetatmoOAuthException, NetatmoParseException {
 
 		final List<String> params = new ArrayList<>();
 
@@ -139,12 +143,18 @@ public class NetatmoHttpClient {
 
 		final String query = implode("&", params.toArray(new String[0]));
 		final String request = URL_GET_STATIONS_DATA + "?" + query;
-		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-				.setAccessToken(token.getAccessToken())
-				.buildQueryMessage();
-		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+		try {
+			final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
+					.setAccessToken(token.getAccessToken())
+					.buildQueryMessage();
+			final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-		return NetatmoUtils.parseStationsData(new JSONObject(resourceResponse.getBody()));
+			return NetatmoUtils.parseStationsData(new JSONObject(resourceResponse.getBody()));
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		} catch (JSONException e) {
+			throw new NetatmoParseException(e);
+		}
 	}
 
 	/**
@@ -164,12 +174,12 @@ public class NetatmoHttpClient {
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
 	 * @return The requested Measures from Netatmo.
-	 * @throws OAuthSystemException When something goes wrong with OAuth.
-	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
+	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
 	public List<Measures> getMeasures(final Station station, final Module module,
 			final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
-					throws OAuthSystemException, OAuthProblemException {
+			throws NetatmoOAuthException, NetatmoParseException {
 
 		Long dateBeginMillis = null;
 		if (dateBegin != null) {
@@ -201,12 +211,12 @@ public class NetatmoHttpClient {
 	 * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
 	 * @param realTime Some fancy real_time stuff from Netatmo
      * @return The requested Measures from Netatmo.
-     * @throws OAuthSystemException When something goes wrong with OAuth.
-     * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
+	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
 	public List<Measures> getMeasures(final Station station, final Module module,
 			final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
-					throws OAuthSystemException, OAuthProblemException {
+			throws NetatmoOAuthException, NetatmoParseException {
 
 		final String[] typesArr;
 		if (types != null) {
@@ -242,10 +252,17 @@ public class NetatmoHttpClient {
 
 		final String query = implode("&", params.toArray(new String[0]));
 		final String request = URL_GET_MEASURES + "?" + query;
-		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).setAccessToken(token.getAccessToken()).buildQueryMessage();
-		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-		return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
+		try {
+			final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).setAccessToken(token.getAccessToken()).buildQueryMessage();
+			final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
+			return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		} catch (JSONException e) {
+			throw new NetatmoParseException(e);
+		}
 	}
 
     /**
@@ -262,12 +279,12 @@ public class NetatmoHttpClient {
      * @param types To filter stations based on relevant measurements you want (e.g. rain will only return stations with rain gauges). Default is no filter. You can find all measurements available on the Thermostat page.
      * @param filter True to exclude station with abnormal temperature measures. Default is false.
      * @return The requested weather data.
-     * @throws OAuthSystemException When something goes wrong with OAuth.
-     * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
+	 * @throws NetatmoParseException If parsing goes wrong.
      */
     public List<Map.Entry<Station, Measures>> getPublicData(double lat_ne, double lon_ne, double lat_sw, double lon_sw,
 															final List<String> types, final Boolean filter)
-            throws OAuthSystemException, OAuthProblemException {
+			throws NetatmoOAuthException, NetatmoParseException {
 
         final List<String> params = new ArrayList<>();
         params.add("lat_ne=" + lat_ne);
@@ -282,12 +299,19 @@ public class NetatmoHttpClient {
         }
         final String query = implode("&", params.toArray(new String[0]));
         final String request = URL_GET_PUBLIC_DATA + "?" + query;
-        final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-                .setAccessToken(token.getAccessToken())
-                .buildQueryMessage();
-        final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        return NetatmoUtils.parsePublicData(new JSONObject(resourceResponse.getBody()));
+        try {
+			final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
+					.setAccessToken(token.getAccessToken())
+					.buildQueryMessage();
+			final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
+			return NetatmoUtils.parsePublicData(new JSONObject(resourceResponse.getBody()));
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		} catch (JSONException e) {
+			throw new NetatmoParseException(e);
+		}
     }
 
 	private static String implode(final String separator, final String... data) {
@@ -313,17 +337,24 @@ public class NetatmoHttpClient {
 	 * for more information.
 	 *
 	 * @return The requested home data.
-	 * @throws OAuthSystemException When something goes wrong with OAuth.
-	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
+	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
-	public List<Home> getHomesdata() throws OAuthSystemException, OAuthProblemException {
+	public List<Home> getHomesdata() throws NetatmoOAuthException, NetatmoParseException {
 
 		final String request = URL_GET_HOMESDATA;
-		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-				.setAccessToken(token.getAccessToken())
-				.buildQueryMessage();
-		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-		return NetatmoUtils.parseHomesdata(new JSONObject(resourceResponse.getBody()));
+
+		try {
+			final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
+					.setAccessToken(token.getAccessToken())
+					.buildQueryMessage();
+			final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+			return NetatmoUtils.parseHomesdata(new JSONObject(resourceResponse.getBody()));
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		} catch (JSONException e) {
+			throw new NetatmoParseException(e);
+		}
 	}
 
 	/**
@@ -335,10 +366,10 @@ public class NetatmoHttpClient {
 	 *
 	 * @param home The home to query
 	 * @return The requested home status.
-	 * @throws OAuthSystemException When something goes wrong with OAuth.
-	 * @throws OAuthProblemException When something goes wrong with OAuth.
+	 * @throws NetatmoOAuthException When something goes wrong with OAuth.
+	 * @throws NetatmoParseException If parsing goes wrong.
 	 */
-	public Home getHomestatus(final Home home) throws OAuthSystemException, OAuthProblemException {
+	public Home getHomestatus(final Home home) throws NetatmoOAuthException, NetatmoParseException {
 		final List<String> params = new ArrayList<>();
 
 		if ( home != null) {
@@ -347,13 +378,19 @@ public class NetatmoHttpClient {
 
 		final String query = implode("&", params.toArray(new String[0]));
 		final String request = URL_GET_HOMESTATUS + "?" + query;
-		final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).buildQueryMessage();
-		bearerClientRequest.addHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer "	+ token.getAccessToken());
+		try {
+			final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).buildQueryMessage();
+			bearerClientRequest.addHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer "	+ token.getAccessToken());
 
-		final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+			final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-		Home result = NetatmoUtils.parseHomestatus(new JSONObject(resourceResponse.getBody()));
-		result.setName(home.getName());
-		return result;
+			Home result = NetatmoUtils.parseHomestatus(new JSONObject(resourceResponse.getBody()));
+			result.setName(home.getName());
+			return result;
+		} catch (OAuthSystemException | OAuthProblemException e) {
+			throw new NetatmoOAuthException(e);
+		} catch (JSONException e) {
+			throw new NetatmoParseException(e);
+		}
 	}
 }
