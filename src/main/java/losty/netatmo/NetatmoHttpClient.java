@@ -96,6 +96,7 @@ public class NetatmoHttpClient {
 	 */
 	public void refreshToken()
 			throws OAuthSystemException, OAuthProblemException {
+
 		OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
 				.setGrantType(GrantType.REFRESH_TOKEN)
 				.setClientId(clientId)
