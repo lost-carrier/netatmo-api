@@ -9,6 +9,6 @@ SELF=$SD/$SCRIPT
 
 cd $SD/
 
-mvnw clean install deploy -Prelease
+sh mvnw clean install deploy -Prelease
 
 cd $WD/
