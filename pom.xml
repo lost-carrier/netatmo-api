@@ -4,8 +4,8 @@
 
 	<groupId>org.losty.netatmo</groupId>
 	<artifactId>netatmo-api</artifactId>
-	<packaging>jar</packaging>
-	<version>0.4.0</version>
+	<version>0.4.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
 	<name>Netatmo API (unofficial)</name>
 	<description>Small adaption of the original Netatmo Android API that can be used with plain Java (>=v7) instead of Android.</description>
