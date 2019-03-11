@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 SD=$(cd $(dirname $0); pwd -P)
 WD="`pwd`"
@@ -9,6 +9,6 @@ SELF=$SD/$SCRIPT
 
 cd $SD/
 
-mvnw clean install
+sh mvnw clean install
 
 cd $WD/
