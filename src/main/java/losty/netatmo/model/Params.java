@@ -33,7 +33,7 @@ public class Params {
     public static final String TYPE_HUMIDITY = "Humidity";
     public static final String TYPE_PRESSURE = "Pressure";
     public static final String TYPE_NOISE = "Noise";
-    public static final String TYPE_RAIN = "Rain";
+    public static final String TYPE_RAIN = "sum_rain";
     public static final String TYPE_RAIN_SUM_24 = "sum_rain_24";
     public static final String TYPE_RAIN_SUM_1 = "sum_rain_1";
     public static final String TYPE_WIND_ANGLE = "WindAngle";
