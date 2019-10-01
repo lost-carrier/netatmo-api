@@ -16,6 +16,11 @@
 package losty.netatmo.model;
 
 public class Params {
+
+    private Params() {
+        throw new IllegalStateException("Utility class");
+    }
+
     // These are all the scales available.
     public static final String SCALE_MAX = "max";
     public static final String SCALE_THIRTY_MINUTES = "30min";

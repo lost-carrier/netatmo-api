@@ -41,15 +41,15 @@ public class NetatmoHttpClient {
 
     // API URLs that will be used for requests, see:
     // https://dev.netatmo.com/doc.
-    private final static String URL_BASE = "https://api.netatmo.net";
-    private final static String URL_REQUEST_TOKEN = URL_BASE + "/oauth2/token";
-    private final static String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
-    private final static String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
-    private final static String URL_GET_PUBLIC_DATA = URL_BASE + "/api/getpublicdata";
-    private final static String URL_GET_HOMESDATA = URL_BASE + "/api/homesdata";
-    private final static String URL_GET_HOMESTATUS = URL_BASE + "/api/homestatus";
+    private static final String URL_BASE = "https://api.netatmo.net";
+    private static final String URL_REQUEST_TOKEN = URL_BASE + "/oauth2/token";
+    private static final String URL_GET_STATIONS_DATA = URL_BASE + "/api/getstationsdata";
+    private static final String URL_GET_MEASURES = URL_BASE + "/api/getmeasure";
+    private static final String URL_GET_PUBLIC_DATA = URL_BASE + "/api/getpublicdata";
+    private static final String URL_GET_HOMESDATA = URL_BASE + "/api/homesdata";
+    private static final String URL_GET_HOMESTATUS = URL_BASE + "/api/homestatus";
 
-    private final static String SCOPE = "read_station read_thermostat";
+    private static final String SCOPE = "read_station read_thermostat";
 
     private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 

@@ -22,7 +22,7 @@ package losty.netatmo;
  */
 public class NetatmoErrorCodes {
 
-    public NetatmoErrorCodes() {
+    private NetatmoErrorCodes() {
         throw new IllegalStateException("Utility class");
     }
 

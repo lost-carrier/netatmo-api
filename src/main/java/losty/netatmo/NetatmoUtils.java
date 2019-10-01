@@ -15,21 +15,19 @@
  */
 package losty.netatmo;
 
-import java.text.ParseException;
-import java.util.*;
-
+import losty.netatmo.model.Module;
+import losty.netatmo.model.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import losty.netatmo.model.Measures;
-import losty.netatmo.model.Module;
-import losty.netatmo.model.Params;
-import losty.netatmo.model.Station;
-import losty.netatmo.model.Home;
-import losty.netatmo.model.Room;
+import java.util.*;
 
 public class NetatmoUtils {
+
+    private NetatmoUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static List<Station> parseStationsData(final JSONObject response) throws JSONException {
         final List<Station> result = new ArrayList<Station>();
