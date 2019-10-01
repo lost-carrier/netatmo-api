@@ -21,6 +21,11 @@ package losty.netatmo;
  * NB: no error code is returned when doing a '/oauth/*' request.
  */
 public class NetatmoErrorCodes {
+
+    public NetatmoErrorCodes() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public final static int ACCESS_TOKEN_MISSING = 1;
     public final static int INVALID_ACCESS_TOKEN = 2;
     public final static int ACCESS_TOKEN_EXPIRED = 3;

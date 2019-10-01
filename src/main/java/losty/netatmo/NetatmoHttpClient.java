@@ -35,10 +35,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NetatmoHttpClient {
 
@@ -402,7 +399,7 @@ public class NetatmoHttpClient {
 
         final List<String> params = new ArrayList<>();
 
-        if ( home != null) {
+        if (home != null) {
             params.add("home_id=" + home.getId());
         }
 
@@ -415,7 +412,7 @@ public class NetatmoHttpClient {
             final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
             Home result = NetatmoUtils.parseHomestatus(new JSONObject(resourceResponse.getBody()));
-            result.setName(home.getName());
+            result.setName(home != null ? home.getName() : null);
             return result;
         } catch (OAuthSystemException | OAuthProblemException e) {
             throw new NetatmoOAuthException(e);
