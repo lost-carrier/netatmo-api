@@ -30,7 +30,7 @@ public class NetatmoUtils {
     }
 
     public static List<Station> parseStationsData(final JSONObject response) throws JSONException {
-        final List<Station> result = new ArrayList<Station>();
+        final List<Station> result = new ArrayList<>();
 
         if (response == null) {
             return result;
@@ -171,7 +171,7 @@ public class NetatmoUtils {
                 Measures measures = null;
                 if (stationForModule == null) {
                     throw new RuntimeException(format("Cannot find moduleId=%s", measuresModuleId));
-                } else if (stationForModule.getModules().size() == 0) {
+                } else if (stationForModule.getModules().isEmpty()) {
                     measures = parseMeasuresMethod1(measuresThisModule);
                 } else switch (stationForModule.getModules().get(0).getType()) {
                     case Module.TYPE_OUTDOOR:
