@@ -29,6 +29,7 @@ public class Measures {
 	private double noise;
 	private double CO2;
 	private double rain;
+	private double sum_rain;
 	private double sum_rain_24;
 	private double sum_rain_1;
 	private double windAngle;
@@ -46,6 +47,7 @@ public class Measures {
 		noise = NO_DATA;
 		CO2 = NO_DATA;
 		rain = NO_DATA;
+		sum_rain = NO_DATA;
 		sum_rain_1 = NO_DATA;
 		sum_rain_24 = NO_DATA;
 		windAngle = NO_DATA;
@@ -118,6 +120,9 @@ public class Measures {
 		this.maxTemp = maxTemp;
 	}
 
+	/**
+	 * Will be filled by getPublicData() requests.
+	 */
 	public double getSum_rain_24() {
 		return sum_rain_24;
 	}
@@ -126,6 +131,9 @@ public class Measures {
 		this.sum_rain_24 = sum_rain_24;
 	}
 
+	/**
+	 * Will be filled by getPublicData() requests.
+	 */
 	public double getSum_rain_1() {
 		return sum_rain_1;
 	}
@@ -134,6 +142,20 @@ public class Measures {
 		this.sum_rain_1 = sum_rain_1;
 	}
 
+	/**
+	 * Will be filled by getMeasures() requests with aggregation (scale != max).
+	 */
+	public double getSum_rain() {
+		return sum_rain;
+	}
+
+	public void setSum_rain(final double sum_rain) {
+		this.sum_rain = sum_rain;
+	}
+
+	/**
+	 * Will be filled by getMeasures() requests without aggregation (scale == max).
+	 */
 	public double getRain() {
 		return rain;
 	}

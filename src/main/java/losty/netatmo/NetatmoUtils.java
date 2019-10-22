@@ -119,11 +119,8 @@ public class NetatmoUtils {
                         case Params.TYPE_RAIN:
                             measures.setRain(myValues.getDouble(k));
                             break;
-                        case Params.TYPE_RAIN_SUM_1:
-                            measures.setSum_rain_1(myValues.getDouble(k));
-                            break;
-                        case Params.TYPE_RAIN_SUM_24:
-                            measures.setSum_rain_24(myValues.getDouble(k));
+                        case Params.TYPE_RAIN_SUM:
+                            measures.setSum_rain(myValues.getDouble(k));
                             break;
                         case Params.TYPE_WIND_ANGLE:
                             measures.setWindAngle(myValues.getDouble(k));

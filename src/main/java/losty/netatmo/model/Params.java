@@ -24,6 +24,7 @@ public class Params {
     // These are all the scales available.
     public static final String SCALE_MAX = "max";
     public static final String SCALE_THIRTY_MINUTES = "30min";
+    public static final String SCALE_ONE_HOUR = "1hour";
     public static final String SCALE_THREE_HOURS = "3hours";
     public static final String SCALE_ONE_DAY = "1day";
     public static final String SCALE_ONE_WEEK = "1week";
@@ -39,8 +40,7 @@ public class Params {
     public static final String TYPE_PRESSURE = "Pressure";
     public static final String TYPE_NOISE = "Noise";
     public static final String TYPE_RAIN = "Rain";
-    public static final String TYPE_RAIN_SUM_24 = "sum_rain_24";
-    public static final String TYPE_RAIN_SUM_1 = "sum_rain_1";
+    public static final String TYPE_RAIN_SUM = "sum_rain";
     public static final String TYPE_WIND_ANGLE = "WindAngle";
     public static final String TYPE_WIND_STRENGTH = "WindStrength";
     public static final String TYPE_GUST_ANGLE = "GustAngle";
