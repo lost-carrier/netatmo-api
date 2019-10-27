@@ -122,6 +122,7 @@ public class Measures {
 
 	/**
 	 * Will be filled by getPublicData() requests.
+	 * @return sum_rain_24
 	 */
 	public double getSum_rain_24() {
 		return sum_rain_24;
@@ -133,6 +134,7 @@ public class Measures {
 
 	/**
 	 * Will be filled by getPublicData() requests.
+	 * @return sum_rain_1
 	 */
 	public double getSum_rain_1() {
 		return sum_rain_1;
@@ -144,6 +146,7 @@ public class Measures {
 
 	/**
 	 * Will be filled by getMeasures() requests with aggregation (scale != max).
+	 * @return sum_rain
 	 */
 	public double getSum_rain() {
 		return sum_rain;
@@ -156,6 +159,7 @@ public class Measures {
 	/**
 	 * Will be filled by getMeasures() requests without aggregation (scale == max). This gets also filled for requests
 	 * with aggregation (scale != max), but not sure how the data should make sense...
+	 * @return rain
 	 */
 	public double getRain() {
 		return rain;
