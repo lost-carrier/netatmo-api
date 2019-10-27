@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static losty.netatmo.model.Module.TYPE_INDOOR;
+import static losty.netatmo.model.Module.TYPE_RAIN_GAUGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,6 +85,66 @@ public class NetatmoHttpClientTest {
         assertEquals("03:xx:xx:xx:xx:xx", modules.get(3).getId());
         assertEquals("Schlafzimmer", modules.get(3).getName());
         assertEquals(TYPE_INDOOR, modules.get(3).getType());
+    }
+
+    @Test
+    public void testGetMeasuresRainWithAggregation() throws OAuthSystemException, IllegalAccessException, OAuthProblemException {
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        prepareToRespond(client, "{\"body\":[{\"beg_time\":1571617800,\"step_time\":3600,\"value\":[[0],[0],[0.7070000000000001],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.202],[0.202],[0],[0],[0],[0],[0],[0]]}],\"status\":\"ok\",\"time_exec\":0.08422398567199707,\"time_server\":1571781297}");
+
+        List<String> types = Arrays.asList(Params.TYPE_RAIN_SUM);
+        Date dateBegin = DateTime.parse("2019-10-21T00Z").toDate();
+        Date dateEnd = DateTime.parse("2019-10-22T00Z").toDate();
+        Station station = new Station("My Station", "70:ee:50:15:f5:dc");
+        Module module = new Module("My Module", "05:00:00:02:a8:38", TYPE_RAIN_GAUGE);
+
+        List<Measures> measures = client.getMeasures(station, module, types, Params.SCALE_ONE_HOUR, dateBegin, dateEnd, null, null);
+        assertEquals(24, measures.size());
+        assertEquals(0.0, measures.get(0).getSum_rain(), 0.0);
+        assertEquals(0.0, measures.get(1).getSum_rain(), 0.0);
+        assertEquals(0.707, measures.get(2).getSum_rain(), 0.00001d);
+        assertEquals(0.0, measures.get(3).getSum_rain(), 0.0d);
+    }
+
+
+    @Test
+    public void testGetMeasuresRainWithScaleMax() throws OAuthSystemException, IllegalAccessException, OAuthProblemException {
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        prepareToRespond(client, "{\"body\":[{\"beg_time\":1571623437,\"step_time\":307,\"value\":[[0],[0]]},{\"beg_time\":1571624039,\"step_time\":308,\"value\":[[0],[0]]},{\"beg_time\":1571624642,\"step_time\":307,\"value\":[[0],[0.101]]},{\"beg_time\":1571625244,\"step_time\":39,\"value\":[[0.101],[0.101]]},{\"beg_time\":1571625577,\"step_time\":308,\"value\":[[0.101],[0.101]]},{\"beg_time\":1571626179,\"step_time\":307,\"value\":[[0.101],[0.101]]},{\"beg_time\":1571626782,\"value\":[[0]]}],\"status\":\"ok\",\"time_exec\":0.06606698036193848,\"time_server\":1571782393}");
+
+        List<String> types = Arrays.asList(Params.TYPE_RAIN);
+        Date dateBegin = DateTime.parse("2019-10-21T02:00Z").toDate();
+        Date dateEnd = DateTime.parse("2019-10-21T03:00Z").toDate();
+        Station station = new Station("My Station", "70:ee:50:15:f5:dc");
+        Module module = new Module("My Module", "05:00:00:02:a8:38", TYPE_RAIN_GAUGE);
+
+        List<Measures> measures = client.getMeasures(station, module, types, Params.SCALE_MAX, dateBegin, dateEnd, null, null);
+        assertEquals(13, measures.size());
+        assertEquals(0.0, measures.get(0).getRain(), 0.0);
+        assertEquals(0.0, measures.get(1).getRain(), 0.0);
+        assertEquals(0.0, measures.get(4).getRain(), 0.0d);
+        assertEquals(0.101, measures.get(5).getRain(), 0.0d);
+        assertEquals(0.101, measures.get(6).getRain(), 0.0d);
+        assertEquals(0.101, measures.get(7).getRain(), 0.0d);
+    }
+
+
+    @Test
+    public void testGetPublicData() throws OAuthSystemException, IllegalAccessException, OAuthProblemException {
+
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret");
+        prepareToRespond(client, "{\"status\":\"ok\",\"time_server\":1571780902,\"time_exec\":0,\"body\":[{\"_id\":\"70:ee:50:02:79:7e\",\"place\":{\"location\":[8.543904,47.369443],\"timezone\":\"Europe/Zurich\",\"country\":\"CH\",\"altitude\":416,\"city\":\"Zurich\"},\"mark\":14,\"measures\":{\"02:00:00:01:f8:66\":{\"res\":{\"1571780697\":[13.4,86]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:02:79:7e\":{\"res\":{\"1571780730\":[1023.7]},\"type\":[\"pressure\"]},\"05:00:00:00:2e:d2\":{\"rain_60min\":0,\"rain_24h\":0.202,\"rain_live\":0,\"rain_timeutc\":1571780723}},\"modules\":[\"02:00:00:01:f8:66\",\"05:00:00:00:2e:d2\"],\"module_types\":{\"02:00:00:01:f8:66\":\"NAModule1\",\"05:00:00:00:2e:d2\":\"NAModule3\"}},{\"_id\":\"70:ee:50:02:91:50\",\"place\":{\"location\":[8.531449500000008,47.3772429],\"timezone\":\"Europe/Zurich\",\"country\":\"CH\",\"altitude\":411,\"city\":\"Zurich\",\"street\":\"Kanonengasse\"},\"mark\":14,\"measures\":{\"02:00:00:02:9d:c0\":{\"res\":{\"1571780396\":[13.9,93]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:02:91:50\":{\"res\":{\"1571780409\":[1022.6]},\"type\":[\"pressure\"]},\"05:00:00:01:27:64\":{\"rain_60min\":0,\"rain_24h\":0,\"rain_live\":0,\"rain_timeutc\":1571780409}},\"modules\":[\"05:00:00:01:27:64\",\"02:00:00:02:9d:c0\"],\"module_types\":{\"05:00:00:01:27:64\":\"NAModule3\",\"02:00:00:02:9d:c0\":\"NAModule1\"}},{\"_id\":\"70:ee:50:06:86:68\",\"place\":{\"location\":[8.541694000000007,47.3768866],\"timezone\":\"Europe/Zurich\",\"country\":\"CH\",\"altitude\":414,\"city\":\"Zurich\",\"street\":\"Bahnhofplatz\"},\"mark\":1,\"measures\":{\"02:00:00:2e:eb:14\":{\"res\":{\"1571780733\":[11.2,98]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:06:86:68\":{\"res\":{\"1571780749\":[1022.2]},\"type\":[\"pressure\"]},\"05:00:00:02:97:82\":{\"rain_60min\":0,\"rain_24h\":0,\"rain_live\":0,\"rain_timeutc\":1571780739}},\"modules\":[\"02:00:00:2e:eb:14\",\"05:00:00:02:97:82\"],\"module_types\":{\"02:00:00:2e:eb:14\":\"NAModule1\",\"05:00:00:02:97:82\":\"NAModule3\"}},{\"_id\":\"70:ee:50:00:a4:fa\",\"place\":{\"location\":[8.547313,47.381006],\"timezone\":\"Europe/Zurich\",\"country\":\"CH\",\"altitude\":470,\"city\":\"Zurich\",\"street\":\"Culmannstrasse\"},\"mark\":14,\"measures\":{\"02:00:00:00:9f:be\":{\"res\":{\"1571780586\":[13.6,86]},\"type\":[\"temperature\",\"humidity\"]},\"70:ee:50:00:a4:fa\":{\"res\":{\"1571780629\":[1022.2]},\"type\":[\"pressure\"]},\"05:00:00:02:41:1c\":{\"rain_60min\":0,\"rain_24h\":0,\"rain_live\":0,\"rain_timeutc\":1571780624},\"06:00:00:00:e9:88\":{\"wind_strength\":1,\"wind_angle\":270,\"gust_strength\":2,\"gust_angle\":270,\"wind_timeutc\":1571780625}},\"modules\":[\"02:00:00:00:9f:be\",\"05:00:00:02:41:1c\",\"06:00:00:00:e9:88\"],\"module_types\":{\"02:00:00:00:9f:be\":\"NAModule1\",\"05:00:00:02:41:1c\":\"NAModule3\",\"06:00:00:00:e9:88\":\"NAModule2\"}}]}");
+
+        List<String> types = Arrays.asList(Params.TYPE_RAIN);
+
+        List<Map.Entry<Station, Measures>> measures = client.getPublicData(47.38d, 8.55d, 47.37d, 8.54d, types, false);
+        assertEquals(13, measures.size());
+        assertEquals(0.0, measures.get(1).getValue().getRain(), 0.0);
+        assertEquals(0.0, measures.get(1).getValue().getSum_rain_1(), 0.0);
+        assertEquals(0.202, measures.get(1).getValue().getSum_rain_24(), 0.0);
+
     }
 
     @Test
