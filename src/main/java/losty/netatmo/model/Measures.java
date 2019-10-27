@@ -154,7 +154,8 @@ public class Measures {
 	}
 
 	/**
-	 * Will be filled by getMeasures() requests without aggregation (scale == max).
+	 * Will be filled by getMeasures() requests without aggregation (scale == max). This gets also filled for requests
+	 * with aggregation (scale != max), but not sure how the data should make sense...
 	 */
 	public double getRain() {
 		return rain;
