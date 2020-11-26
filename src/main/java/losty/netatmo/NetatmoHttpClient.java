@@ -61,11 +61,11 @@ public class NetatmoHttpClient {
     private TokenStore tokenStore;
 
     public NetatmoHttpClient(final String clientId, final String clientSecret) {
-    	this(clientId, clientSecret, new TransientTokenStore());
+        this(clientId, clientSecret, new TransientTokenStore());
     }
 
     public NetatmoHttpClient(final String clientId, final String clientSecret, final TokenStore tokenStore) {
-		this.clientId = clientId;
+        this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenStore = tokenStore;
     }
@@ -431,7 +431,7 @@ public class NetatmoHttpClient {
         final String request = URL_GET_HOMESTATUS + "?" + query;
         try {
             final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).buildQueryMessage();
-            bearerClientRequest.addHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer "	+ tokenStore.getAccessToken());
+            bearerClientRequest.addHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer "    + tokenStore.getAccessToken());
 
             final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
@@ -446,33 +446,33 @@ public class NetatmoHttpClient {
     }
 
     private boolean isAccessTokenExpired() {
-    	return tokenStore.getExpiresAt() < System.currentTimeMillis();
+        return tokenStore.getExpiresAt() < System.currentTimeMillis();
     }
 
     /**
      * @return the current {@link OAuthStatus}
      */
     public OAuthStatus getOAuthStatus() {
-    	if (tokenStore.getAccessToken() == null) {
-    		return OAuthStatus.NO_LOGIN;
-    	}
-    	if (isAccessTokenExpired()) {
-    		return OAuthStatus.EXPIRED_ACCESS_TOKEN;
-    	}
-    	return OAuthStatus.VALID_ACCESS_TOKEN;
+        if (tokenStore.getAccessToken() == null) {
+            return OAuthStatus.NO_LOGIN;
+        }
+        if (isAccessTokenExpired()) {
+            return OAuthStatus.EXPIRED_ACCESS_TOKEN;
+        }
+        return OAuthStatus.VALID_ACCESS_TOKEN;
     }
 
     /**
      * The OAuth status. There may be a valid, an expired or no access token. 
      */
     public enum OAuthStatus {
-    	/** An valid access token exists, which will be used for netatmo request. */
-    	VALID_ACCESS_TOKEN,
-    	
-    	/** An expired access token exists. On the next netatmo request a new access token will be acquired by using the refresh token. */
-    	EXPIRED_ACCESS_TOKEN,
-    	
-    	/** Not logged in. Have to provide username/password to acquire an access token. */
-    	NO_LOGIN
+        /** An valid access token exists, which will be used for netatmo request. */
+        VALID_ACCESS_TOKEN,
+        
+        /** An expired access token exists. On the next netatmo request a new access token will be acquired by using the refresh token. */
+        EXPIRED_ACCESS_TOKEN,
+        
+        /** Not logged in. Have to provide username/password to acquire an access token. */
+        NO_LOGIN
     }
 }

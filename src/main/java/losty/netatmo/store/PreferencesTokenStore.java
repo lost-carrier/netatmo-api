@@ -10,34 +10,34 @@ public class PreferencesTokenStore implements TokenStore {
     private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
     private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT";
     
-	private Preferences preferences;
-	
-	/**
-	 * @param preferencesPathName the path name of the preference node
-	 */
-	public PreferencesTokenStore(String preferencesPathName) {
-		preferences = Preferences.userRoot().node(preferencesPathName);
-	}
+    private Preferences preferences;
+    
+    /**
+     * @param preferencesPathName the path name of the preference node
+     */
+    public PreferencesTokenStore(String preferencesPathName) {
+        preferences = Preferences.userRoot().node(preferencesPathName);
+    }
 
-	@Override
-	public void setTokens(String refreshToken, String accessToken, long expiresAt) {
-		preferences.put(KEY_REFRESH_TOKEN, refreshToken);
-		preferences.put(KEY_ACCESS_TOKEN, accessToken);
-		preferences.putLong(KEY_EXPIRES_AT, expiresAt);
-	}
+    @Override
+    public void setTokens(String refreshToken, String accessToken, long expiresAt) {
+        preferences.put(KEY_REFRESH_TOKEN, refreshToken);
+        preferences.put(KEY_ACCESS_TOKEN, accessToken);
+        preferences.putLong(KEY_EXPIRES_AT, expiresAt);
+    }
 
-	@Override
-	public String getRefreshToken() {
-		return preferences.get(KEY_REFRESH_TOKEN, null);
-	}
+    @Override
+    public String getRefreshToken() {
+        return preferences.get(KEY_REFRESH_TOKEN, null);
+    }
 
-	@Override
-	public String getAccessToken() {
-		return preferences.get(KEY_ACCESS_TOKEN, null);
-	}
+    @Override
+    public String getAccessToken() {
+        return preferences.get(KEY_ACCESS_TOKEN, null);
+    }
 
-	@Override
-	public long getExpiresAt() {
-		return preferences.getLong(KEY_EXPIRES_AT, 0);
-	}
+    @Override
+    public long getExpiresAt() {
+        return preferences.getLong(KEY_EXPIRES_AT, 0);
+    }
 }

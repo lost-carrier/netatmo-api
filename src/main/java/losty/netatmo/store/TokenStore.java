@@ -5,23 +5,23 @@ package losty.netatmo.store;
  */
 public interface TokenStore {
 
-	/**
-	 * Sets the tokens and expiration parameter from the OAuth request.
-	 * 
-	 * @param refreshToken the refreshToken
-	 * @param accessToken the accessToken
-	 * @param expiresAt the calculated expiration time
-	 */
-	void setTokens(String refreshToken, String accessToken, long expiresAt);
-	
-	/**
-	 * @return the refresh token
-	 */
-	String getRefreshToken();
-	
-	/**
-	 * @return the access token
-	 */
+    /**
+     * Sets the tokens and expiration parameter from the OAuth request.
+     * 
+     * @param refreshToken the refreshToken
+     * @param accessToken the accessToken
+     * @param expiresAt the calculated expiration time
+     */
+    void setTokens(String refreshToken, String accessToken, long expiresAt);
+    
+    /**
+     * @return the refresh token
+     */
+    String getRefreshToken();
+    
+    /**
+     * @return the access token
+     */
     String getAccessToken();
     
     /**

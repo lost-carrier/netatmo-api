@@ -5,29 +5,29 @@ package losty.netatmo.store;
  */
 public class TransientTokenStore implements TokenStore {
 
-	private String refreshToken;
-	private String accessToken;
-	private long expiresAt;
+    private String refreshToken;
+    private String accessToken;
+    private long expiresAt;
 
-	@Override
-	public void setTokens(String refreshToken, String accessToken, long expiresAt) {
-		this.refreshToken = refreshToken;
-		this.accessToken = accessToken;
-		this.expiresAt = expiresAt;
-	}
+    @Override
+    public void setTokens(String refreshToken, String accessToken, long expiresAt) {
+        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+        this.expiresAt = expiresAt;
+    }
 
-	@Override
-	public String getRefreshToken() {
-		return refreshToken;
-	}
+    @Override
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
-	@Override
-	public String getAccessToken() {
-		return accessToken;
-	}
+    @Override
+    public String getAccessToken() {
+        return accessToken;
+    }
 
-	@Override
-	public long getExpiresAt() {
-		return expiresAt;
-	}
+    @Override
+    public long getExpiresAt() {
+        return expiresAt;
+    }
 }
