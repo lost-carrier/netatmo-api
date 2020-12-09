@@ -2,8 +2,8 @@ package losty.netatmo;
 
 import losty.netatmo.model.*;
 import losty.netatmo.model.Module;
-import losty.netatmo.store.TokenStore;
-import losty.netatmo.store.TransientTokenStore;
+import losty.netatmo.store.OAuthTokenStore;
+import losty.netatmo.store.TransientOAuthTokenStore;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -1012,32 +1012,32 @@ public class NetatmoHttpClientTest {
 
     @Test
     public void getAuthStatus_notLoggedIn() {
-        TokenStore tokenStore = new TransientTokenStore();
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", tokenStore);
+        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
         assertEquals(NetatmoHttpClient.OAuthStatus.NO_LOGIN, client.getOAuthStatus());
     }
 
     @Test
     public void getAuthStatus_validAccessToken() {
-        TokenStore tokenStore = new TransientTokenStore();
-        tokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", tokenStore);
+        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
+        oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
         assertEquals(NetatmoHttpClient.OAuthStatus.VALID_ACCESS_TOKEN, client.getOAuthStatus());
     }
 
     @Test
     public void getAuthStatus_expiredAccessToken() {
-        TokenStore tokenStore = new TransientTokenStore();
-        tokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() - 20000);
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", tokenStore);
+        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
+        oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() - 20000);
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
         assertEquals(NetatmoHttpClient.OAuthStatus.EXPIRED_ACCESS_TOKEN, client.getOAuthStatus());
     }
 
     private static NetatmoHttpClient prepareToRespond(String string) throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
-        TokenStore tokenStore = new TransientTokenStore();
-        tokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", tokenStore);
-        
+        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
+        oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
+        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
+
         OAuthResourceResponse response = mock(OAuthResourceResponse.class);
         when(response.getBody()). thenReturn(string);
         OAuthClient oAuthClient = mock(OAuthClient.class);

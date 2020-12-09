@@ -3,9 +3,9 @@ package losty.netatmo.store;
 import java.util.prefs.Preferences;
 
 /**
- * {@link TokenStore} implementation which stores the OAuth token as Java Preferences.
+ * {@link OAuthTokenStore} implementation which stores the OAuth token as Java Preferences.
  */
-public class PreferencesTokenStore implements TokenStore {
+public class PreferencesOAuthTokenStore implements OAuthTokenStore {
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
     private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT";
@@ -15,7 +15,7 @@ public class PreferencesTokenStore implements TokenStore {
     /**
      * @param preferencesPathName the path name of the preference node
      */
-    public PreferencesTokenStore(String preferencesPathName) {
+    public PreferencesOAuthTokenStore(String preferencesPathName) {
         preferences = Preferences.userRoot().node(preferencesPathName);
     }
 

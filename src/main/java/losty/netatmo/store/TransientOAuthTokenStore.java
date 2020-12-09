@@ -3,7 +3,7 @@ package losty.netatmo.store;
 /**
  * Holds the OAuth access and refresh token and the expiration time.
  */
-public class TransientTokenStore implements TokenStore {
+public class TransientOAuthTokenStore implements OAuthTokenStore {
 
     private String refreshToken;
     private String accessToken;

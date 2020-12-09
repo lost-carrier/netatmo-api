@@ -3,7 +3,7 @@ package losty.netatmo.store;
 /**
  * Holds the OAuth access token. May persist the token additionally.
  */
-public interface TokenStore {
+public interface OAuthTokenStore {
 
     /**
      * Sets the tokens and expiration parameter from the OAuth request.
