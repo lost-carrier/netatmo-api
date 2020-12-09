@@ -1,4 +1,4 @@
-package losty.netatmo.store;
+package losty.netatmo.oauthtoken;
 
 /**
  * Holds the OAuth access and refresh token and the expiration time.

@@ -22,8 +22,8 @@ import losty.netatmo.model.Home;
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
 import losty.netatmo.model.Station;
-import losty.netatmo.store.OAuthTokenStore;
-import losty.netatmo.store.TransientOAuthTokenStore;
+import losty.netatmo.oauthtoken.OAuthTokenStore;
+import losty.netatmo.oauthtoken.TransientOAuthTokenStore;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;

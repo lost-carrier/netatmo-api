@@ -2,8 +2,8 @@ package losty.netatmo;
 
 import losty.netatmo.model.*;
 import losty.netatmo.model.Module;
-import losty.netatmo.store.OAuthTokenStore;
-import losty.netatmo.store.TransientOAuthTokenStore;
+import losty.netatmo.oauthtoken.OAuthTokenStore;
+import losty.netatmo.oauthtoken.TransientOAuthTokenStore;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;

@@ -1,4 +1,4 @@
-package losty.netatmo.store;
+package losty.netatmo.oauthtoken;
 
 import java.util.prefs.Preferences;
 
