@@ -2,6 +2,7 @@ package losty.netatmo;
 
 import losty.netatmo.model.*;
 import losty.netatmo.model.Module;
+import losty.netatmo.oauthtoken.OAuthTokenHandler;
 import losty.netatmo.oauthtoken.OAuthTokenStore;
 import losty.netatmo.oauthtoken.TransientOAuthTokenStore;
 
@@ -1010,39 +1011,18 @@ public class NetatmoHttpClientTest {
         assertEquals(false, natherm1.isBoilerStatus());
     }
 
-    @Test
-    public void getAuthStatus_notLoggedIn() {
-        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
-        assertEquals(NetatmoHttpClient.OAuthStatus.NO_LOGIN, client.getOAuthStatus());
-    }
-
-    @Test
-    public void getAuthStatus_validAccessToken() {
-        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
-        oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
-        assertEquals(NetatmoHttpClient.OAuthStatus.VALID_ACCESS_TOKEN, client.getOAuthStatus());
-    }
-
-    @Test
-    public void getAuthStatus_expiredAccessToken() {
-        OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
-        oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() - 20000);
-        NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
-        assertEquals(NetatmoHttpClient.OAuthStatus.EXPIRED_ACCESS_TOKEN, client.getOAuthStatus());
-    }
-
     private static NetatmoHttpClient prepareToRespond(String string) throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
         OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
         oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
         NetatmoHttpClient client = new NetatmoHttpClient("client_id", "client_secret", oauthTokenStore);
 
         OAuthResourceResponse response = mock(OAuthResourceResponse.class);
-        when(response.getBody()). thenReturn(string);
+        when(response.getBody()).thenReturn(string);
         OAuthClient oAuthClient = mock(OAuthClient.class);
         when(oAuthClient.resource(any(OAuthClientRequest.class), eq(OAuth.HttpMethod.GET), eq(OAuthResourceResponse.class))).thenReturn(response);
-        FieldUtils.writeField(client, "oAuthClient", oAuthClient, true);
+
+        OAuthTokenHandler oAuthTokenHandler = (OAuthTokenHandler) FieldUtils.readField(client, "oAuthTokenHandler", true);
+        FieldUtils.writeField(oAuthTokenHandler, "oAuthClient", oAuthClient, true);
         
         return client;
     }
