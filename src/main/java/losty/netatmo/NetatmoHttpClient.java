@@ -103,7 +103,7 @@ public class NetatmoHttpClient {
         final String request = URL_GET_STATIONS_DATA + "?" + query;
         try {
             final String responseBody = oAuthTokenHandler.executeRequest(request);
-            return NetatmoUtils.parseStationsData(new JSONObject(responseBody));
+            return NetatmoParseUtils.parseStationsData(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
@@ -209,7 +209,7 @@ public class NetatmoHttpClient {
 
         try {
             final String responseBody = oAuthTokenHandler.executeRequest(request);
-            return NetatmoUtils.parseMeasures(new JSONObject(responseBody), typesArr);
+            return NetatmoParseUtils.parseMeasures(new JSONObject(responseBody), typesArr);
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
@@ -253,7 +253,7 @@ public class NetatmoHttpClient {
 
         try {
             final String responseBody = oAuthTokenHandler.executeRequest(request);
-            return NetatmoUtils.parsePublicData(new JSONObject(responseBody));
+            return NetatmoParseUtils.parsePublicData(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
@@ -292,7 +292,7 @@ public class NetatmoHttpClient {
 
         try {
             final String responseBody = oAuthTokenHandler.executeRequest(request);
-            return NetatmoUtils.parseHomesdata(new JSONObject(responseBody));
+            return NetatmoParseUtils.parseHomesdata(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
@@ -323,7 +323,7 @@ public class NetatmoHttpClient {
         final String request = URL_GET_HOMESTATUS + "?" + query;
         try {
             final String responseBody = oAuthTokenHandler.executeRequest(request);
-            Home result = NetatmoUtils.parseHomestatus(new JSONObject(responseBody));
+            final Home result = NetatmoParseUtils.parseHomestatus(new JSONObject(responseBody));
             result.setName(home != null ? home.getName() : null);
             return result;
         } catch (JSONException e) {

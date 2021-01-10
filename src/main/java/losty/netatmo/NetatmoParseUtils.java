@@ -23,9 +23,9 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-public class NetatmoUtils {
+public class NetatmoParseUtils {
 
-    private NetatmoUtils() {
+    private NetatmoParseUtils() {
         throw new IllegalStateException("Utility class");
     }
 
