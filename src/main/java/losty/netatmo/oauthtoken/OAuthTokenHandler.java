@@ -12,12 +12,8 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OAuthTokenHandler {
-
-    private final static Logger LOG = LoggerFactory.getLogger(OAuthTokenHandler.class);
 
     private final String tokenUrl;
     private final String scope;
@@ -53,8 +49,6 @@ public class OAuthTokenHandler {
      * @throws NetatmoOAuthException When something goes wrong with OAuth.
      */
     public void login(final String email, final String password) throws NetatmoOAuthException {
-
-        LOG.info("login()");
 
         try {
             OAuthClientRequest request = OAuthClientRequest.tokenLocation(tokenUrl)
@@ -102,26 +96,18 @@ public class OAuthTokenHandler {
     }
 
     private void verifyLoggedIn() throws NetatmoNotLoggedInException {
-
-        LOG.info("verifyLoggedIn()");
-
         if (oauthTokenStore.getAccessToken() == null) {
             throw new NetatmoNotLoggedInException("Please use login() first!");
         }
     }
 
     private void verifyAccessToken() {
-
-        LOG.info("verifyAccessToken()");
-
         if(isAccessTokenExpired()) {
             refreshToken();
         }
     }
 
     private void refreshToken() throws NetatmoNotLoggedInException, NetatmoOAuthException {
-
-        LOG.info("refreshToken()");
 
         verifyLoggedIn();
 
