@@ -75,13 +75,33 @@ public class OAuthTokenHandler {
     }
 
     /**
-     * Retrieve an refreshed or renewed access token, using your
-     * refresh token and the user's credentials.
+     * To be described...
      *
-     * @throws NetatmoNotLoggedInException If not logged in.
-     * @throws NetatmoOAuthException When something goes wrong with OAuth.
+     * @param request
+     * @return The body of the response
+     * @throws NetatmoOAuthException
      */
-    public void verifyLoggedIn() throws NetatmoNotLoggedInException {
+    public String executeRequest(String request) throws NetatmoOAuthException {
+
+        verifyLoggedIn();
+        verifyAccessToken();
+
+        try {
+            final OAuthClientRequest bearerClientRequest = createBearerClientRequest(request);
+            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+            return resourceResponse.getBody();
+        } catch (OAuthSystemException | OAuthProblemException e) {
+            throw new NetatmoOAuthException(e);
+        }
+    }
+
+    private OAuthClientRequest createBearerClientRequest(String request) throws OAuthSystemException {
+        return new OAuthBearerClientRequest(request)
+                .setAccessToken(oauthTokenStore.getAccessToken())
+                .buildQueryMessage();
+    }
+
+    private void verifyLoggedIn() throws NetatmoNotLoggedInException {
 
         LOG.info("verifyLoggedIn()");
 
@@ -90,14 +110,7 @@ public class OAuthTokenHandler {
         }
     }
 
-    /**
-     * Retrieve an refreshed or renewed access token, using your
-     * refresh token and the user's credentials.
-     *
-     * @throws NetatmoNotLoggedInException If not logged in.
-     * @throws NetatmoOAuthException When something goes wrong with OAuth.
-     */
-    public void verifyAccessToken() {
+    private void verifyAccessToken() {
 
         LOG.info("verifyAccessToken()");
 
@@ -131,29 +144,5 @@ public class OAuthTokenHandler {
 
     private boolean isAccessTokenExpired() {
         return oauthTokenStore.getExpiresAt() < System.currentTimeMillis();
-    }
-
-    /**
-     * To be described...
-     *
-     * @param request
-     * @return The body of the response
-     * @throws NetatmoOAuthException
-     */
-    public String executeRequest(String request) throws NetatmoOAuthException {
-
-        try {
-            final OAuthClientRequest bearerClientRequest = createBearerClientRequest(request);
-            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-            return resourceResponse.getBody();
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
-        }
-    }
-
-    private OAuthClientRequest createBearerClientRequest(String request) throws OAuthSystemException {
-        return new OAuthBearerClientRequest(request)
-                .setAccessToken(oauthTokenStore.getAccessToken())
-                .buildQueryMessage();
     }
 }

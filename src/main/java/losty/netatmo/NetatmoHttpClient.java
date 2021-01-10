@@ -89,9 +89,6 @@ public class NetatmoHttpClient {
     public List<Station> getStationsData(final Station station, final Boolean getFavorites)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        oAuthTokenHandler.verifyLoggedIn();
-        oAuthTokenHandler.verifyAccessToken();
-
         final List<String> params = new ArrayList<>();
 
         if (station != null) {
@@ -137,9 +134,6 @@ public class NetatmoHttpClient {
                                       final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        oAuthTokenHandler.verifyLoggedIn();
-        oAuthTokenHandler.verifyAccessToken();
-
         Long dateBeginMillis = null;
         if (dateBegin != null) {
             dateBeginMillis = (dateBegin.getTime() / 1000);
@@ -177,9 +171,6 @@ public class NetatmoHttpClient {
     public List<Measures> getMeasures(final Station station, final Module module,
                                       final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
-
-        oAuthTokenHandler.verifyLoggedIn();
-        oAuthTokenHandler.verifyAccessToken();
 
         final String[] typesArr;
         if (types != null) {
@@ -246,9 +237,6 @@ public class NetatmoHttpClient {
                                                             final List<String> types, final Boolean filter)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        oAuthTokenHandler.verifyLoggedIn();
-        oAuthTokenHandler.verifyAccessToken();
-
         final List<String> params = new ArrayList<>();
         params.add("lat_ne=" + lat_ne);
         params.add("lon_ne=" + lon_ne);
@@ -300,9 +288,6 @@ public class NetatmoHttpClient {
      */
     public List<Home> getHomesdata() throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        oAuthTokenHandler.verifyLoggedIn();
-        oAuthTokenHandler.verifyAccessToken();
-
         final String request = URL_GET_HOMESDATA;
 
         try {
@@ -327,9 +312,6 @@ public class NetatmoHttpClient {
      * @throws NetatmoParseException If parsing goes wrong.
      */
     public Home getHomestatus(final Home home) throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
-
-        oAuthTokenHandler.verifyLoggedIn();
-        oAuthTokenHandler.verifyAccessToken();
 
         final List<String> params = new ArrayList<>();
 
