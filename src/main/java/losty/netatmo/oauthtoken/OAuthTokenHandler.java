@@ -13,6 +13,10 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
+
+/**
+ * This class handles all stuff around the OAuth authentication including signing the requests.
+ */
 public class OAuthTokenHandler {
 
     private final String tokenUrl;
@@ -23,13 +27,12 @@ public class OAuthTokenHandler {
     private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
     /**
-     * To be described...
      *
-     * @param tokenUrl
-     * @param scope
-     * @param clientId
-     * @param clientSecret
-     * @param oauthTokenStore
+     * @param tokenUrl The URL where to get the token. Should be always https://api.netatmo.net/oauth2/token, but one can never be sure...
+     * @param scope The requested scope for the token.
+     * @param clientId This apps clientId.
+     * @param clientSecret This apps clientSecret.
+     * @param oauthTokenStore Some method to store the retrieved tokens so that they can be reused.
      */
     public OAuthTokenHandler(String tokenUrl, String scope, String clientId, String clientSecret, OAuthTokenStore oauthTokenStore) {
         this.tokenUrl = tokenUrl;
@@ -69,11 +72,11 @@ public class OAuthTokenHandler {
     }
 
     /**
-     * To be described...
+     * Executes a certain GET request to a OAuth protected URL.
      *
-     * @param request
+     * @param request The URL to GET.
      * @return The body of the response
-     * @throws NetatmoOAuthException
+     * @throws NetatmoOAuthException if something goes wrong - check Exception message for details.
      */
     public String executeRequest(String request) throws NetatmoOAuthException {
 

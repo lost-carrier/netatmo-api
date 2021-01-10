@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+//FIXME: all private methods... do we really want to test this!?
 public class OAuthTokenHandlerTest {
 
     @Test(expected = NetatmoNotLoggedInException.class)
