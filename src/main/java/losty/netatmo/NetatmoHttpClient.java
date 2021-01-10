@@ -99,10 +99,9 @@ public class NetatmoHttpClient {
             params.add("get_favorites=" + getFavorites);
         }
 
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_STATIONS_DATA + "?" + query;
         try {
-            final String responseBody = oAuthTokenHandler.executeRequest(request);
+            final String requestUrl = generateRequestUrl(URL_GET_STATIONS_DATA, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
             return NetatmoParseUtils.parseStationsData(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
@@ -204,11 +203,10 @@ public class NetatmoHttpClient {
             params.add(String.format("real_time=%b", realTime));
         }
 
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_MEASURES + "?" + query;
 
         try {
-            final String responseBody = oAuthTokenHandler.executeRequest(request);
+            final String requestUrl = generateRequestUrl(URL_GET_MEASURES, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
             return NetatmoParseUtils.parseMeasures(new JSONObject(responseBody), typesArr);
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
@@ -248,30 +246,14 @@ public class NetatmoHttpClient {
         if (filter != null) {
             params.add("filter=" + filter);
         }
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_PUBLIC_DATA + "?" + query;
 
         try {
-            final String responseBody = oAuthTokenHandler.executeRequest(request);
+            final String requestUrl = generateRequestUrl(URL_GET_PUBLIC_DATA, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
             return NetatmoParseUtils.parsePublicData(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
-    }
-
-    private static String implode(final String separator, final String... data) {
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < data.length - 1; i++) {
-            sb.append(data[i]);
-            sb.append(separator);
-        }
-
-        if (data.length > 0) {
-            sb.append(data[data.length - 1].trim());
-        }
-
-        return sb.toString();
     }
 
     /**
@@ -288,10 +270,10 @@ public class NetatmoHttpClient {
      */
     public List<Home> getHomesdata() throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        final String request = URL_GET_HOMESDATA;
+        final String requestUrl = generateRequestUrl(URL_GET_HOMESDATA);
 
         try {
-            final String responseBody = oAuthTokenHandler.executeRequest(request);
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
             return NetatmoParseUtils.parseHomesdata(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
@@ -319,15 +301,37 @@ public class NetatmoHttpClient {
             params.add("home_id=" + home.getId());
         }
 
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_HOMESTATUS + "?" + query;
         try {
-            final String responseBody = oAuthTokenHandler.executeRequest(request);
+            final String requestUrl = generateRequestUrl(URL_GET_HOMESTATUS, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
             final Home result = NetatmoParseUtils.parseHomestatus(new JSONObject(responseBody));
             result.setName(home != null ? home.getName() : null);
             return result;
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
+    }
+
+    private static String generateRequestUrl(final String path, final String... params) {
+        if (params.length == 0) {
+            return path;
+        } else {
+            return path + "?" + implode("&", params);
+        }
+    }
+
+    private static String implode(final String separator, final String... data) {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < data.length - 1; i++) {
+            sb.append(data[i]);
+            sb.append(separator);
+        }
+
+        if (data.length > 0) {
+            sb.append(data[data.length - 1].trim());
+        }
+
+        return sb.toString();
     }
 }
