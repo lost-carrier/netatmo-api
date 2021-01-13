@@ -1,7 +1,7 @@
 Netatmo Java API (unofficial)
 ========
 
-Small adaption of the original [Netatmo Android API][1] that can be used with plain Java (>=v7) instead of Android. Nothing special, but might help you getting started as some parsing and the OAuth2 stuff is already handled (many thanks to those folks at [Apache Oltu][2]!).
+Small adaption of the original [Netatmo Android API][1] that can be used with plain Java (>=v8) instead of Android. Nothing special, but might help you getting started as some parsing and the OAuth2 stuff is already handled (many thanks to those folks at [Apache Oltu][2]!).
 
 Documentation of their API is available at https://dev.netatmo.com/doc/.
 
