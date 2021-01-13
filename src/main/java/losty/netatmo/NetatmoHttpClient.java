@@ -22,20 +22,16 @@ import losty.netatmo.model.Home;
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
 import losty.netatmo.model.Station;
-import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
-import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
+import losty.netatmo.oauthtoken.OAuthTokenHandler;
+import losty.netatmo.oauthtoken.OAuthTokenStore;
+import losty.netatmo.oauthtoken.TransientOAuthTokenStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class NetatmoHttpClient {
 
@@ -51,15 +47,14 @@ public class NetatmoHttpClient {
 
     private static final String SCOPE = "read_station read_thermostat";
 
-    private final OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-
-    private String clientId;
-    private String clientSecret;
-    private OAuthJSONAccessTokenResponse token;
+    private final OAuthTokenHandler oAuthTokenHandler;
 
     public NetatmoHttpClient(final String clientId, final String clientSecret) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
+        this(clientId, clientSecret, new TransientOAuthTokenStore());
+    }
+
+    public NetatmoHttpClient(final String clientId, final String clientSecret, final OAuthTokenStore oauthTokenStore) {
+        this.oAuthTokenHandler = new OAuthTokenHandler(URL_REQUEST_TOKEN, SCOPE, clientId, clientSecret, oauthTokenStore);
     }
 
     /**
@@ -72,47 +67,7 @@ public class NetatmoHttpClient {
      * @throws NetatmoOAuthException When something goes wrong with OAuth.
      */
     public void login(final String email, final String password) throws NetatmoOAuthException {
-
-        try {
-            OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
-                    .setGrantType(GrantType.PASSWORD)
-                    .setClientId(clientId)
-                    .setClientSecret(clientSecret)
-                    .setUsername(email)
-                    .setPassword(password)
-                    .setScope(SCOPE)
-                    .buildBodyMessage();
-
-            token = oAuthClient.accessToken(request);
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
-        }
-    }
-
-    /**
-     * Retrieve an refreshed or renewed access token, using your
-     * refresh token and the user's credentials.
-     *
-     * @throws NetatmoNotLoggedInException If not logged in.
-     * @throws NetatmoOAuthException When something goes wrong with OAuth.
-     */
-    public void refreshToken() throws NetatmoNotLoggedInException, NetatmoOAuthException {
-
-        verifyLoggedIn();
-
-        try {
-            OAuthClientRequest request = OAuthClientRequest.tokenLocation(URL_REQUEST_TOKEN)
-                    .setGrantType(GrantType.REFRESH_TOKEN)
-                    .setClientId(clientId)
-                    .setClientSecret(clientSecret)
-                    .setRefreshToken(token.getRefreshToken())
-                    .setScope(SCOPE)
-                    .buildBodyMessage();
-
-            token = oAuthClient.accessToken(request);
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
-        }
+        oAuthTokenHandler.login(email, password);
     }
 
     /**
@@ -134,8 +89,6 @@ public class NetatmoHttpClient {
     public List<Station> getStationsData(final Station station, final Boolean getFavorites)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        verifyLoggedIn();
-
         final List<String> params = new ArrayList<>();
 
         if (station != null) {
@@ -146,17 +99,10 @@ public class NetatmoHttpClient {
             params.add("get_favorites=" + getFavorites);
         }
 
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_STATIONS_DATA + "?" + query;
         try {
-            final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-                    .setAccessToken(token.getAccessToken())
-                    .buildQueryMessage();
-            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            return NetatmoUtils.parseStationsData(new JSONObject(resourceResponse.getBody()));
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
+            final String requestUrl = generateRequestUrl(URL_GET_STATIONS_DATA, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
+            return NetatmoParseUtils.parseStationsData(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
@@ -186,8 +132,6 @@ public class NetatmoHttpClient {
     public List<Measures> getMeasures(final Station station, final Module module,
                                       final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
-
-        verifyLoggedIn();
 
         Long dateBeginMillis = null;
         if (dateBegin != null) {
@@ -227,8 +171,6 @@ public class NetatmoHttpClient {
                                       final List<String> types, final String scale, final Long dateBegin, final Long dateEnd, final Integer limit, final Boolean realTime)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        verifyLoggedIn();
-
         final String[] typesArr;
         if (types != null) {
             typesArr = types.toArray(new String[0]);
@@ -261,16 +203,11 @@ public class NetatmoHttpClient {
             params.add(String.format("real_time=%b", realTime));
         }
 
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_MEASURES + "?" + query;
 
         try {
-            final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).setAccessToken(token.getAccessToken()).buildQueryMessage();
-            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            return NetatmoUtils.parseMeasures(new JSONObject(resourceResponse.getBody()), typesArr);
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
+            final String requestUrl = generateRequestUrl(URL_GET_MEASURES, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
+            return NetatmoParseUtils.parseMeasures(new JSONObject(responseBody), typesArr);
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
@@ -298,8 +235,6 @@ public class NetatmoHttpClient {
                                                             final List<String> types, final Boolean filter)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        verifyLoggedIn();
-
         final List<String> params = new ArrayList<>();
         params.add("lat_ne=" + lat_ne);
         params.add("lon_ne=" + lon_ne);
@@ -311,36 +246,14 @@ public class NetatmoHttpClient {
         if (filter != null) {
             params.add("filter=" + filter);
         }
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_PUBLIC_DATA + "?" + query;
 
         try {
-            final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-                    .setAccessToken(token.getAccessToken())
-                    .buildQueryMessage();
-            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            return NetatmoUtils.parsePublicData(new JSONObject(resourceResponse.getBody()));
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
+            final String requestUrl = generateRequestUrl(URL_GET_PUBLIC_DATA, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
+            return NetatmoParseUtils.parsePublicData(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
-    }
-
-    private static String implode(final String separator, final String... data) {
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < data.length - 1; i++) {
-            sb.append(data[i]);
-            sb.append(separator);
-        }
-
-        if (data.length > 0) {
-            sb.append(data[data.length - 1].trim());
-        }
-
-        return sb.toString();
     }
 
     /**
@@ -357,26 +270,13 @@ public class NetatmoHttpClient {
      */
     public List<Home> getHomesdata() throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        verifyLoggedIn();
-
-        final String request = URL_GET_HOMESDATA;
+        final String requestUrl = generateRequestUrl(URL_GET_HOMESDATA);
 
         try {
-            final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request)
-                    .setAccessToken(token.getAccessToken())
-                    .buildQueryMessage();
-            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-            return NetatmoUtils.parseHomesdata(new JSONObject(resourceResponse.getBody()));
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
+            return NetatmoParseUtils.parseHomesdata(new JSONObject(responseBody));
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
-        }
-    }
-
-    private void verifyLoggedIn() throws NetatmoNotLoggedInException {
-        if (token == null) {
-            throw new NetatmoNotLoggedInException("Please use login() first!");
         }
     }
 
@@ -395,29 +295,43 @@ public class NetatmoHttpClient {
      */
     public Home getHomestatus(final Home home) throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        verifyLoggedIn();
-
         final List<String> params = new ArrayList<>();
 
         if (home != null) {
             params.add("home_id=" + home.getId());
         }
 
-        final String query = implode("&", params.toArray(new String[0]));
-        final String request = URL_GET_HOMESTATUS + "?" + query;
         try {
-            final OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(request).buildQueryMessage();
-            bearerClientRequest.addHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer "	+ token.getAccessToken());
-
-            final OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            Home result = NetatmoUtils.parseHomestatus(new JSONObject(resourceResponse.getBody()));
+            final String requestUrl = generateRequestUrl(URL_GET_HOMESTATUS, params.toArray(new String[0]));
+            final String responseBody = oAuthTokenHandler.executeRequest(requestUrl);
+            final Home result = NetatmoParseUtils.parseHomestatus(new JSONObject(responseBody));
             result.setName(home != null ? home.getName() : null);
             return result;
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
         } catch (JSONException e) {
             throw new NetatmoParseException(e);
         }
+    }
+
+    private static String generateRequestUrl(final String path, final String... params) {
+        if (params.length == 0) {
+            return path;
+        } else {
+            return path + "?" + implode("&", params);
+        }
+    }
+
+    private static String implode(final String separator, final String... data) {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < data.length - 1; i++) {
+            sb.append(data[i]);
+            sb.append(separator);
+        }
+
+        if (data.length > 0) {
+            sb.append(data[data.length - 1].trim());
+        }
+
+        return sb.toString();
     }
 }
