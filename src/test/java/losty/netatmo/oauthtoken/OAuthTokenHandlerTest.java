@@ -4,7 +4,6 @@ import losty.netatmo.exceptions.NetatmoNotLoggedInException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthClientResponse;
 import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -17,7 +16,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-//FIXME: all private methods... do we really want to test this!?
 public class OAuthTokenHandlerTest {
 
     private OAuthTokenHandler oAuthTokenHandler;
