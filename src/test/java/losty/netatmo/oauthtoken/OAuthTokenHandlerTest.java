@@ -9,11 +9,10 @@ import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -26,7 +25,7 @@ public class OAuthTokenHandlerTest {
     private OAuthClient oAuthClient;
 
 
-    @Before
+    @BeforeEach
     public void init() throws IllegalAccessException {
         oAuthTokenStore = new TransientOAuthTokenStore();
         oAuthTokenHandler = new OAuthTokenHandler("url", "scope", "client_id", "client_secret", oAuthTokenStore);
@@ -82,8 +81,9 @@ public class OAuthTokenHandlerTest {
         assertTrue(oAuthTokenStore.getExpiresAt() > 42L);
     }
 
-    @Test(expected = NetatmoNotLoggedInException.class)
+    @Test
     public void testNotLoggedIn() {
-        oAuthTokenHandler.executeRequest("someUrl");
+        assertThrows(NetatmoNotLoggedInException.class,
+                () -> oAuthTokenHandler.executeRequest("someUrl"));
     }
 }
