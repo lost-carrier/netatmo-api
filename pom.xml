@@ -37,7 +37,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Build relevant information -->
-        <java.version>1.8</java.version>
+        <java.version>8</java.version>
         <maven.api.minimum>3.6.0</maven.api.minimum>
         <maven.api.version>3.6.0</maven.api.version>
     </properties>
@@ -144,6 +144,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <release>${java.version}</release>
                         <encoding>UTF-8</encoding>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
