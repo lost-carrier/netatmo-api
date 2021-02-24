@@ -1011,6 +1011,68 @@ public class NetatmoHttpClientTest {
         assertEquals(false, natherm1.isBoilerStatus());
     }
 
+    @Test
+    public void getHomestatusWithNulls() throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
+        NetatmoHttpClient client = prepareToRespond("{\n" +
+                "    \"status\": \"ok\",\n" +
+                "    \"time_server\": 1547560610,\n" +
+                "    \"body\": {\n" +
+                "        \"home\": {\n" +
+                "            \"modules\": [\n" +
+                "                {\n" +
+                "                    \"id\": \"70:xx:xx:xx:xx:xx\",\n" +
+                "                    \"type\": \"NAPlug\",\n" +
+                "                    \"firmware_revision\": 174,\n" +
+                "                    \"rf_strength\": 104,\n" +
+                "                    \"wifi_strength\": 86\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"id\": \"04:xx:xx:xx:xx:xx\",\n" +
+                "                    \"reachable\": true,\n" +
+                "                    \"type\": \"NATherm1\",\n" +
+                "                    \"firmware_revision\": 65,\n" +
+                "                    \"rf_strength\": 70,\n" +
+                "                    \"battery_level\": 4400,\n" +
+                "                    \"boiler_valve_comfort_boost\": false,\n" +
+                "                    \"boiler_status\": false,\n" +
+                "                    \"anticipating\": false,\n" +
+                "                    \"bridge\": \"70:xx:xx:xx:xx:xx\",\n" +
+                "                    \"battery_state\": \"full\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"rooms\": [\n" +
+                "                {\n" +
+                "                    \"id\": \"xxxxxxxxx\",\n" +
+                "                    \"reachable\": true,\n" +
+                "                    \"therm_measured_temperature\": 19,\n" +
+                "                    \"therm_setpoint_temperature\": 19,\n" +
+                "                    \"therm_setpoint_mode\": \"schedule\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"id\": \"xxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+
+        Home home = new Home();
+        home.setId("xxxxxxxxxxxxxxxxxxxxxxxx");
+        home.setName("Thermostat");
+        home = client.getHomestatus(home);
+
+        assertEquals(2, home.getModules().size());
+        assertEquals(1, home.getRooms().size());
+
+        Module naplug = home.getModules().get(0);
+        assertEquals("70:xx:xx:xx:xx:xx", naplug.getId());
+        assertEquals(Module.TYPE_NA_PLUG, naplug.getType());
+
+        Module natherm1 = home.getModules().get(1);
+        assertEquals("04:xx:xx:xx:xx:xx", natherm1.getId());
+        assertEquals(Module.TYPE_NA_THERM_1, natherm1.getType());
+        assertEquals(true, natherm1.isReachable());
+        assertEquals(false, natherm1.isBoilerStatus());
+    }
+
     private static NetatmoHttpClient prepareToRespond(String string) throws OAuthProblemException, OAuthSystemException, IllegalAccessException {
         OAuthTokenStore oauthTokenStore = new TransientOAuthTokenStore();
         oauthTokenStore.setTokens("refreshToken", "accessToken", System.currentTimeMillis() + 20000);
