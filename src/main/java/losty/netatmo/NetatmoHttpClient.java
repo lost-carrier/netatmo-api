@@ -28,6 +28,8 @@ import losty.netatmo.oauthtoken.TransientOAuthTokenStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -130,20 +132,52 @@ public class NetatmoHttpClient {
      * @throws NetatmoParseException If parsing goes wrong.
      */
     public List<Measures> getMeasures(final Station station, final Module module,
+                                      final List<String> types, final String scale, final ZonedDateTime dateBegin, final ZonedDateTime dateEnd, final Integer limit, final Boolean realTime)
+            throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
+
+        Long dateBeginUnixTs = dateBegin != null ? dateBegin.toEpochSecond() : null;
+        Long dateEndUnixTs = dateEnd != null ? dateEnd.toEpochSecond() : null;
+
+        return getMeasures(station, module, types, scale, dateBeginUnixTs, dateEndUnixTs, limit, realTime);
+    }
+
+    /**
+     * Returns the list of measures for a device or module owned by the user.
+     * See
+     * <a href="https://dev.netatmo.com/en-US/resources/technical/reference/common/getmeasure">
+     * dev.netatmo.com/en-US/resources/technical/reference/common/getmeasure</a> for more information.
+     *
+     * Some parameters are optional, they can be set to "null".
+     *
+     * @param station The station to query
+     * @param module The module of the station (optional)
+     * @param types A list of the types to query
+     * @param scale The scale to query
+     * @param dateBegin Start date of the interval to query (optional)
+     * @param dateEnd End date of the interval to query (optional)
+     * @param limit The amount of Measures to be returned at maximum (be careful - max. is 1024!)
+     * @param realTime Some fancy real_time stuff from Netatmo
+     * @return The requested Measures from Netatmo.
+     * @throws NetatmoNotLoggedInException If not logged in.
+     * @throws NetatmoOAuthException When something goes wrong with OAuth.
+     * @throws NetatmoParseException If parsing goes wrong.
+     */
+    @Deprecated
+    public List<Measures> getMeasures(final Station station, final Module module,
                                       final List<String> types, final String scale, final Date dateBegin, final Date dateEnd, final Integer limit, final Boolean realTime)
             throws NetatmoNotLoggedInException, NetatmoOAuthException, NetatmoParseException {
 
-        Long dateBeginMillis = null;
+        Long dateBeginUnixTs = null;
         if (dateBegin != null) {
-            dateBeginMillis = (dateBegin.getTime() / 1000);
+            dateBeginUnixTs = (dateBegin.getTime() / 1000);
         }
 
-        Long dateEndMillis = null;
+        Long dateEndUnixTs = null;
         if (dateEnd != null) {
-            dateEndMillis = (dateEnd.getTime() / 1000);
+            dateEndUnixTs = (dateEnd.getTime() / 1000);
         }
 
-        return getMeasures(station, module, types, scale, dateBeginMillis, dateEndMillis, limit, realTime);
+        return getMeasures(station, module, types, scale, dateBeginUnixTs, dateEndUnixTs, limit, realTime);
     }
 
     /**
