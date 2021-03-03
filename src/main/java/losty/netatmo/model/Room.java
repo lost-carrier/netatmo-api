@@ -65,7 +65,7 @@ public class Room {
         this.therm_setpoint_start_time = therm_setpoint_start_time;
     }
 
-    public long getTherm_setpoint_end_time() {
+    public Long getTherm_setpoint_end_time() {
         return therm_setpoint_end_time;
     }
 
