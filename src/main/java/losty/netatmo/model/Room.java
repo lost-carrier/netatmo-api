@@ -14,8 +14,8 @@ public class Room {
     private float therm_measured_temperature;
     private float therm_setpoint_temperature;
     private String therm_setpoint_mode;
-    private long therm_setpoint_start_time;
-    private long therm_setpoint_end_time;
+    private Long therm_setpoint_start_time;
+    private Long therm_setpoint_end_time;
 
     public String getId() {
         return id;
@@ -57,11 +57,11 @@ public class Room {
         this.therm_setpoint_mode = therm_setpoint_mode;
     }
 
-    public long getTherm_setpoint_start_time() {
+    public Long getTherm_setpoint_start_time() {
         return therm_setpoint_start_time;
     }
 
-    public void setTherm_setpoint_start_time(long therm_setpoint_start_time) {
+    public void setTherm_setpoint_start_time(Long therm_setpoint_start_time) {
         this.therm_setpoint_start_time = therm_setpoint_start_time;
     }
 
@@ -69,7 +69,7 @@ public class Room {
         return therm_setpoint_end_time;
     }
 
-    public void setTherm_setpoint_end_time(long therm_setpoint_end_time) {
+    public void setTherm_setpoint_end_time(Long therm_setpoint_end_time) {
         this.therm_setpoint_end_time = therm_setpoint_end_time;
     }
 }

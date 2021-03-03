@@ -269,10 +269,8 @@ public class NetatmoParseUtils {
             room.setTherm_measured_temperature(therm_measured_temperature);
             room.setTherm_setpoint_temperature(therm_setpoint_temperature);
             room.setTherm_setpoint_mode(therm_setpoint_mode);
-            if (therm_setpoint_start_time != null){
-                room.setTherm_setpoint_start_time(therm_setpoint_start_time);}
-            if (therm_setpoint_end_time != null){
-                room.setTherm_setpoint_end_time(therm_setpoint_end_time);}
+            room.setTherm_setpoint_start_time(therm_setpoint_start_time);
+            room.setTherm_setpoint_end_time(therm_setpoint_end_time);
 
             home.addRoom(room);
         }
