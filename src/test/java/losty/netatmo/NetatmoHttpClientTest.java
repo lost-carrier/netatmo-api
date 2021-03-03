@@ -1061,6 +1061,8 @@ public class NetatmoHttpClientTest {
 
         assertEquals(2, home.getModules().size());
         assertEquals(1, home.getRooms().size());
+        assertNull(home.getRooms().get(0).getTherm_setpoint_start_time());
+        assertNull(home.getRooms().get(0).getTherm_setpoint_end_time());
 
         Module naplug = home.getModules().get(0);
         assertEquals("70:xx:xx:xx:xx:xx", naplug.getId());
