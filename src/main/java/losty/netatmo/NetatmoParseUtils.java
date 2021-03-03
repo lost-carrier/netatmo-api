@@ -252,8 +252,16 @@ public class NetatmoParseUtils {
             final float therm_measured_temperature = jsonRoom.getFloat("therm_measured_temperature");
             final float therm_setpoint_temperature = jsonRoom.getFloat("therm_setpoint_temperature");
             final String therm_setpoint_mode = jsonRoom.getString("therm_setpoint_mode");
-            final long therm_setpoint_start_time = jsonRoom.getLong("therm_setpoint_start_time");
-            final long therm_setpoint_end_time = jsonRoom.getLong("therm_setpoint_end_time");
+
+            Long therm_setpoint_start_time = null;
+            if (jsonRoom.opt("therm_setpoint_start_time") != null) {
+                therm_setpoint_start_time = jsonRoom.getLong("therm_setpoint_start_time");
+            }
+
+            Long therm_setpoint_end_time = null;
+            if (jsonRoom.opt("therm_setpoint_end_time") != null) {
+                therm_setpoint_end_time = jsonRoom.getLong("therm_setpoint_end_time");
+            }
 
             Room room = new Room();
             room.setId(room_id);
