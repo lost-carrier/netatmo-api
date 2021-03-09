@@ -14,7 +14,7 @@ Now available at Maven Central, so just add the dependency to your ```pom.xml```
         <dependency>
             <groupId>org.losty.netatmo</groupId>
             <artifactId>netatmo-api</artifactId>
-            <version>0.7.0</version>
+            <version>0.8.0</version>
         </dependency>
         [...]
     </dependencies>
