@@ -28,8 +28,8 @@ You'll get CLIENT_ID and CLIENT_SECRET at https://dev.netatmo.com/dev/createapp.
 	client.login(E_MAIL, PASSWORD);
 	
 	List<String> types = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_PRESSURE, Params.TYPE_HUMIDITY);
-	Date dateBegin = DateTime.parse("2015-09-10T00Z").toDate();
-	Date dateEnd = DateTime.parse("2015-09-11T00Z").toDate();
+	ZonedDateTime dateBegin = ZonedDateTime.parse("2015-09-10T00Z");
+	ZonedDateTime dateEnd = ZonedDateTime.parse("2015-09-11T00Z");
 	Station station = client.getStationsData().get(0);
 	
 	List<Measures> measures = client.getMeasures(station, station.getModules().get(0), types, Params.SCALE_MAX, dateBegin, dateEnd, null, null);
