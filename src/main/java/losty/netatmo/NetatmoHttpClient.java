@@ -51,25 +51,12 @@ public class NetatmoHttpClient {
 
     private final OAuthTokenHandler oAuthTokenHandler;
 
-    public NetatmoHttpClient(final String clientId, final String clientSecret) {
-        this(clientId, clientSecret, new TransientOAuthTokenStore());
-    }
-
     public NetatmoHttpClient(final String clientId, final String clientSecret, final OAuthTokenStore oauthTokenStore) {
         this.oAuthTokenHandler = new OAuthTokenHandler(URL_REQUEST_TOKEN, SCOPE, clientId, clientSecret, oauthTokenStore);
     }
 
-    /**
-     * This is the first request you have to do before being able to use the
-     * API. It allows you to retrieve an access token in one step, using your
-     * application's credentials and the user's credentials.
-     *
-     * @param email E-Mail
-     * @param password Password
-     * @throws NetatmoOAuthException When something goes wrong with OAuth.
-     */
-    public void login(final String email, final String password) throws NetatmoOAuthException {
-        oAuthTokenHandler.login(email, password);
+    public NetatmoHttpClient(final String clientId, final String clientSecret, final String scope, final OAuthTokenStore oauthTokenStore) {
+        this.oAuthTokenHandler = new OAuthTokenHandler(URL_REQUEST_TOKEN, scope, clientId, clientSecret, oauthTokenStore);
     }
 
     /**

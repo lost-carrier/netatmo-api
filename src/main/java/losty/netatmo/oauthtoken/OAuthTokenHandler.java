@@ -43,35 +43,6 @@ public class OAuthTokenHandler {
     }
 
     /**
-     * This is the first request you have to do before being able to use the
-     * API. It allows you to retrieve an access token in one step, using your
-     * application's credentials and the user's credentials.
-     *
-     * @param email E-Mail
-     * @param password Password
-     * @throws NetatmoOAuthException When something goes wrong with OAuth.
-     */
-    public void login(final String email, final String password) throws NetatmoOAuthException {
-
-        try {
-            OAuthClientRequest request = OAuthClientRequest.tokenLocation(tokenUrl)
-                    .setGrantType(GrantType.PASSWORD)
-                    .setClientId(clientId)
-                    .setClientSecret(clientSecret)
-                    .setUsername(email)
-                    .setPassword(password)
-                    .setScope(scope)
-                    .buildBodyMessage();
-
-            OAuthJSONAccessTokenResponse token = oAuthClient.accessToken(request);
-            long expiresAt = System.currentTimeMillis() + token.getExpiresIn() * 1000;
-            oauthTokenStore.setTokens(token.getRefreshToken(), token.getAccessToken(), expiresAt);
-        } catch (OAuthSystemException | OAuthProblemException e) {
-            throw new NetatmoOAuthException(e);
-        }
-    }
-
-    /**
      * Executes a certain GET request to a OAuth protected URL.
      *
      * @param request The URL to GET.
@@ -80,7 +51,6 @@ public class OAuthTokenHandler {
      */
     public String executeRequest(String request) throws NetatmoOAuthException {
 
-        verifyLoggedIn();
         verifyAccessToken();
 
         try {
@@ -98,21 +68,17 @@ public class OAuthTokenHandler {
                 .buildQueryMessage();
     }
 
-    private void verifyLoggedIn() throws NetatmoNotLoggedInException {
-        if (oauthTokenStore.getAccessToken() == null) {
-            throw new NetatmoNotLoggedInException("Please use login() first!");
-        }
-    }
-
     private void verifyAccessToken() {
         if(isAccessTokenExpired()) {
             refreshToken();
         }
     }
 
-    private void refreshToken() throws NetatmoNotLoggedInException, NetatmoOAuthException {
+    private boolean isAccessTokenExpired() {
+        return oauthTokenStore.getExpiresAt() < System.currentTimeMillis();
+    }
 
-        verifyLoggedIn();
+    private void refreshToken() throws NetatmoNotLoggedInException, NetatmoOAuthException {
 
         try {
             OAuthClientRequest request = OAuthClientRequest.tokenLocation(tokenUrl)
@@ -129,9 +95,5 @@ public class OAuthTokenHandler {
         } catch (OAuthSystemException | OAuthProblemException e) {
             throw new NetatmoOAuthException(e);
         }
-    }
-
-    private boolean isAccessTokenExpired() {
-        return oauthTokenStore.getExpiresAt() < System.currentTimeMillis();
     }
 }

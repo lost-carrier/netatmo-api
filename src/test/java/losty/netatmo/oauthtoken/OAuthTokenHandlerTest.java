@@ -65,21 +65,6 @@ public class OAuthTokenHandlerTest {
     }
 
     @Test
-    public void testLogin() throws OAuthProblemException, OAuthSystemException {
-        OAuthJSONAccessTokenResponse tokenResponse = mock(OAuthJSONAccessTokenResponse.class);
-        when(tokenResponse.getRefreshToken()).thenReturn("refreshToken");
-        when(tokenResponse.getAccessToken()).thenReturn("accessToken");
-        when(tokenResponse.getExpiresIn()).thenReturn(42L);
-        when(oAuthClient.accessToken(any(OAuthClientRequest.class))).thenReturn(tokenResponse);
-
-        oAuthTokenHandler.login("email", "password");
-
-        assertEquals("refreshToken", oAuthTokenStore.getRefreshToken());
-        assertEquals("accessToken", oAuthTokenStore.getAccessToken());
-        assertTrue(oAuthTokenStore.getExpiresAt() > 42L);
-    }
-
-    @Test
     public void testNotLoggedIn() {
         assertThrows(NetatmoNotLoggedInException.class,
                 () -> oAuthTokenHandler.executeRequest("someUrl"));
