@@ -3,7 +3,7 @@ Netatmo Java API (unofficial)
 
 Small adaption of the original [Netatmo Android API][1] that can be used with plain Java (>=v8) instead of Android. Nothing special, but might help you getting started as some parsing and the OAuth2 stuff is already handled (many thanks to those folks at [Apache Oltu][2]!).
 
-Documentation of their API is available at https://dev.netatmo.com/doc/.
+Documentation of their API is available at https://dev.netatmo.com/apidocumentation/general.
 
 Installation
 --------
@@ -14,7 +14,7 @@ Now available at Maven Central, so just add the dependency to your ```pom.xml```
         <dependency>
             <groupId>org.losty.netatmo</groupId>
             <artifactId>netatmo-api</artifactId>
-            <version>0.8.0</version>
+            <version>0.9.0</version>
         </dependency>
         [...]
     </dependencies>
@@ -22,10 +22,11 @@ Now available at Maven Central, so just add the dependency to your ```pom.xml```
 Usage
 --------
 
-You'll get CLIENT_ID and CLIENT_SECRET at https://dev.netatmo.com/dev/createapp.
+You'll get CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN and ACCESS_TOKEN at https://dev.netatmo.com/apps/.
 
-	NetatmoHttpClient client = new NetatmoHttpClient(CLIENT_ID, CLIENT_SECRET);
-	client.login(E_MAIL, PASSWORD);
+    OAuthTokenStore tokenStore = new TransientOAuthTokenStore();
+    tokenStore.setTokens(REFRESH_TOKEN, ACCESS_TOKEN, 0);
+	NetatmoHttpClient client = new NetatmoHttpClient(CLIENT_ID, CLIENT_SECRET, tokenStore);
 	
 	List<String> types = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_PRESSURE, Params.TYPE_HUMIDITY);
 	ZonedDateTime dateBegin = ZonedDateTime.parse("2015-09-10T00:00Z");
