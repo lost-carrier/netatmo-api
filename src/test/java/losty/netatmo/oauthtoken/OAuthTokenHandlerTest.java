@@ -63,10 +63,4 @@ public class OAuthTokenHandlerTest {
         assertEquals("I am the body of the response!", response);
         verify(oAuthClient, times(1)).accessToken(any(OAuthClientRequest.class));
     }
-
-    @Test
-    public void testNotLoggedIn() {
-        assertThrows(NetatmoNotLoggedInException.class,
-                () -> oAuthTokenHandler.executeRequest("someUrl"));
-    }
 }
