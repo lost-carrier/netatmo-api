@@ -30,8 +30,15 @@ public class Module {
     private String name;
     private String id;
     private String type;
-    private boolean reachable;
-    private boolean boiler_status;
+    private Integer firmware;
+    private Long lastSetup;
+    private Long lastMessage;
+    private Long lastSeen;
+    private Integer rfStatus;
+    private Integer batteryVp;
+    private Integer batteryPercent;
+    private Boolean reachable;
+    private Boolean boiler_status;
 
     public Module() {
     }
@@ -66,19 +73,75 @@ public class Module {
         this.type = type;
     }
 
-    public boolean isReachable() {
+    public Integer getFirmware() {
+        return firmware;
+    }
+
+    public void setFirmware(Integer firmware) {
+        this.firmware = firmware;
+    }
+
+    public Long getLastSetup() {
+        return lastSetup;
+    }
+
+    public void setLastSetup(Long lastSetup) {
+        this.lastSetup = lastSetup;
+    }
+
+    public Long getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(Long lastMessage) {
+        this.lastMessage = lastMessage;
+    }
+
+    public Long getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(Long lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public Integer getRfStatus() {
+        return rfStatus;
+    }
+
+    public void setRfStatus(Integer rfStatus) {
+        this.rfStatus = rfStatus;
+    }
+
+    public Integer getBatteryVp() {
+        return batteryVp;
+    }
+
+    public void setBatteryVp(Integer batteryVp) {
+        this.batteryVp = batteryVp;
+    }
+
+    public Integer getBatteryPercent() {
+        return batteryPercent;
+    }
+
+    public void setBatteryPercent(Integer batteryPercent) {
+        this.batteryPercent = batteryPercent;
+    }
+
+    public Boolean isReachable() {
         return reachable;
     }
 
-    public void setReachable(boolean reachable) {
+    public void setReachable(Boolean reachable) {
         this.reachable = reachable;
     }
 
-    public boolean isBoilerStatus() {
+    public Boolean isBoilerStatus() {
         return boiler_status;
     }
 
-    public void setBoilerStatus(boolean boiler_status) {
+    public void setBoilerStatus(Boolean boiler_status) {
         this.boiler_status = boiler_status;
     }
 }

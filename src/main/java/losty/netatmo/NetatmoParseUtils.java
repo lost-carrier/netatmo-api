@@ -59,6 +59,35 @@ public class NetatmoParseUtils {
                 final String moduleType = module.getString("type");
 
                 final Module newModule = new Module(moduleName, moduleId, moduleType);
+
+                if (module.has("firmware")) {
+                    newModule.setFirmware(module.getInt("firmware"));
+                }
+
+                if (module.has("last_setup")) {
+                    newModule.setLastSetup(module.getLong("last_setup"));
+                }
+
+                if (module.has("last_seen")) {
+                    newModule.setLastSeen(module.getLong("last_seen"));
+                }
+
+                if (module.has("last_message")) {
+                    newModule.setLastMessage(module.getLong("last_message"));
+                }
+
+                if (module.has("rf_status")) {
+                    newModule.setRfStatus(module.getInt("rf_status"));
+                }
+
+                if (module.has("battery_vp")) {
+                    newModule.setBatteryVp(module.getInt("battery_vp"));
+                }
+
+                if (module.has("battery_percent")) {
+                    newModule.setBatteryPercent(module.getInt("battery_percent"));
+                }
+
                 newStation.addModule(newModule);
             }
 
