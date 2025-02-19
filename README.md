@@ -1,3 +1,5 @@
+:no_entry: [DEPRECATED] Due to Netatmo's authentication procedure changes, this lib continued to operate unreliably. I threw my Netatmo in the trash and went for Ecowitt!
+
 Netatmo Java API (unofficial)
 ========
 
